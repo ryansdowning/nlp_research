@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "nlp_research"
+version = "0.0.1"
+description = "Exploratory Research in the NLP field by Ryan Downing"
+authors = ["ryansdowning <ryansdowning1@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
