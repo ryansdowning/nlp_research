@@ -6,9 +6,15 @@ authors = ["ryansdowning <ryansdowning1@gmail.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = ">=3.8"
+pandas = "^1.1.0"
+transformers = "^3.0.2"
+praw = "^7.1.0"
+flashtext = "^2.7"
 
 [tool.poetry.dev-dependencies]
+jupyter = "^1.0.0"
+jupyterlab = "^2.2.4"
 
 [build-system]
 requires = ["poetry>=0.12"]
