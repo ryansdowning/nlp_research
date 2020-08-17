@@ -1,4 +1,5 @@
 import argparse
+import logging
 from rsutils import data_utils as du
 
 parser = argparse.ArgumentParser()
@@ -23,6 +24,29 @@ parser.add_argument(
     nargs='*',
     type=str
 )
+parser.add_argument(
+    '-l',
+    '--log',
+    action='store_true'
+)
 
 args = parser.parse_args()
-du.stream_subreddit_submissions(args.subreddit, args.file, args.fields)
+
+if args.log:
+    logger = logging.getLogger('rsutils')
+    sh = logging.StreamHandler()
+    fh = logging.FileHandler('submissions.log')
+    formatter = logging.Formatter('%(asctime)s - %(name)s (%(levelname)s): %(message)s')
+
+    sh.setFormatter(formatter)
+    fh.setFormatter(formatter)
+    logger.addHandler(sh)
+    logger.addHandler(fh)
+
+    logger.setLevel(logging.INFO)
+
+try:
+    du.stream_subreddit_submissions(args.subreddit, args.file, args.fields)
+except:
+    logging.exception('Something horrible has happened!')
+    raise

@@ -1,9 +1,14 @@
 from typing import Iterable, List, Optional, Union, Tuple
 
 import pandas as pd
+import numpy as np
 
 from flashtext import KeywordProcessor
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
+
+SENTIMENT_SUFFIX = '_sentiment'
+KEYWORDS_SUFFIX = '_keywords'
+BASE_MODEL = 'distilbert-base-uncased-finetuned-sst-2-english'
 
 
 def _handle_data_and_source(
@@ -26,9 +31,9 @@ def _handle_data_and_source(
 
 def apply_sentiment_tags(
         df_or_file: Union[str, pd.DataFrame],
-        model_name_or_path: str,
+        model_name_or_path: str = BASE_MODEL,
         source: Union[str, List[str]] = 'text',
-        tag_suffix: str = '_sentiment',
+        tag_suffix: str = SENTIMENT_SUFFIX,
         file: Optional[str] = None,
 ):
     model = AutoModelForSequenceClassification.from_pretrained(model_name_or_path)
@@ -60,9 +65,9 @@ def apply_keywords_tags(
         df_or_file: Union[str, pd.DataFrame],
         keywords: Iterable[str],
         source: Union[str, List[str]] = 'text',
-        case_sensitive: bool = False,
+        case_sensitive: bool = True,
         span: bool = False,
-        tag_suffix: str = '_keywords',
+        tag_suffix: str = KEYWORDS_SUFFIX,
         file: Optional[str] = None,
 ):
     data, source = _handle_data_and_source(df_or_file, source)
@@ -84,7 +89,7 @@ def filter_keywords(
         data: pd.DataFrame,
         keywords: Iterable[str],
         source: Union[str, List[str]] = 'text',
-        case_sensitive: bool = False
+        case_sensitive: bool = True
 ) -> pd.DataFrame:
     proc = KeywordProcessor(case_sensitive=case_sensitive)
     proc.add_keywords_from_list(keywords)
@@ -96,3 +101,39 @@ def filter_keywords(
         )
     output = data[mask]
     return output
+
+
+def _multi_hot_encode(labels):
+    unique_labels = np.unique(np.concatenate(labels, axis=0))
+
+    def _get_encoding(label, unique):
+        return pd.Series(unique).isin(label).astype(int)
+
+    encoded = pd.Series(labels).apply(lambda label: _get_encoding(label, unique_labels))
+    encoded.columns = unique_labels
+    return encoded
+
+
+def get_keywords_sentiment(
+        df_or_file: Union[pd.DataFrame, str],
+        keywords: List[str],
+        source: str = 'text',
+        case_sensitive: bool = True,
+        model_name_or_path: str = BASE_MODEL,
+):
+    # Remove rows without any keywords
+    data = apply_keywords_tags(df_or_file, keywords, source, case_sensitive)
+    data = data[data[f'{source}{KEYWORDS_SUFFIX}'].astype(bool)]
+
+    # Get sentiment with (-1, 1) labels
+    data = apply_sentiment_tags(
+        data,
+        model_name_or_path,
+        source
+    )
+    data['sentiment_score'] = (data[f'{source}{SENTIMENT_SUFFIX}'] * 2) - 1
+
+    # Encode keyword vectors and multiply them against the sentiment score to get keyword scores
+    encoded = _multi_hot_encode(data[f'{source}{KEYWORDS_SUFFIX}'].values)
+    keyword_scores = encoded.T * data['sentiment_score'].values
+    return keyword_scores.sum(axis=1)  # Sum to get overall sentiment for each keyword

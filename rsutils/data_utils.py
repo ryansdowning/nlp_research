@@ -1,3 +1,4 @@
+import os
 import csv
 import logging
 from typing import Any, Iterable, Iterator, List, Optional, Tuple, Union
@@ -178,6 +179,9 @@ def get_submission_comments(
 ) -> List[praw.reddit.Comment]:
     comments = []
     for submission in submissions:
+        logging.info(
+            'Using replace more to get additional comments for submission: %s' % submission.id
+        )
         submission.comments.replace_more(limit=limit)
         comments.extend(submission.comments.list())
     return comments
@@ -212,7 +216,8 @@ def get_subreddit_submission_comments(
 def _stream_subreddit_data(
         subreddit: str,
         sub_or_comm: str,
-        file: str, data_fields: Optional[List[str]] = None,
+        file: str,
+        data_fields: List[str],
         **kwargs
 ):
     if sub_or_comm not in ('submissions', 'comments'):
@@ -224,13 +229,26 @@ def _stream_subreddit_data(
         else sub.stream.comments(**kwargs)
     )
 
-    with open(file, 'w') as out:
-        csv_out = csv.writer(out)
-        csv_out.writerow(data_fields)
+    logging.info('Checking if file exists at: %s' % file)
+    if os.path.exists(file):
+        with open(file, 'rb') as out:
+            reader = csv.reader(out)
+            fields = reader.next()
+        if fields != data_fields:
+            raise OSError(
+                f"File already exists at: {file}\nDoes not share the same data fields so data "
+                f"cannot be appended. Please specify a different file path or match the existing"
+                f" data fields\nCurrent fields: {fields}"
+            )
+    else:
+        with open(file, 'w') as out:
+            csv_out = csv.writer(out)
+            csv_out.writerow(data_fields)
 
     for data in data_stream:
         extracted = _get_attributes_list(data, data_fields)
         with open(file, 'a', encoding='utf-8') as out:
+            logging.info('writing %s data to to file at: %s' % (sub_or_comm, file))
             csv_out = csv.writer(out)
             csv_out.writerow(extracted)
 
