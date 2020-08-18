@@ -1,18 +1,13 @@
-import os
 import csv
-import logging
+import os
 from typing import Any, Iterable, Iterator, List, Optional, Tuple, Union
 
 import pandas as pd
 
 import praw
-from rsutils.constants import (
-    COMMENT_FIELDS,
-    COMMENT_SORTS,
-    SUBMISSION_FIELDS,
-    SUBMISSION_SORTS,
-    reddit,
-)
+from loguru import logger
+from rsutils.constants import (COMMENT_FIELDS, COMMENT_SORTS,
+                               SUBMISSION_FIELDS, SUBMISSION_SORTS, reddit)
 
 
 def get_submissions(subreddit: praw.reddit.Subreddit, sort_method: str, **kwargs) -> Iterator[Any]:
@@ -33,7 +28,7 @@ def get_submissions(subreddit: praw.reddit.Subreddit, sort_method: str, **kwargs
             f" for submissions: {SUBMISSION_SORTS}"
         )
 
-    logging.info(
+    logger.info(
         'Attempting to get submissions from subreddit: %s, using sort method of: %s'
         % (subreddit, sort_method)
     )
@@ -179,7 +174,7 @@ def get_submission_comments(
 ) -> List[praw.reddit.Comment]:
     comments = []
     for submission in submissions:
-        logging.info(
+        logger.info(
             'Using replace more to get additional comments for submission: %s' % submission.id
         )
         submission.comments.replace_more(limit=limit)
@@ -229,7 +224,7 @@ def _stream_subreddit_data(
         else sub.stream.comments(**kwargs)
     )
 
-    logging.info('Checking if file exists at: %s' % file)
+    logger.info('Checking if file exists at: %s' % file)
     if os.path.exists(file):
         with open(file, 'rb') as out:
             reader = csv.reader(out)
@@ -248,7 +243,7 @@ def _stream_subreddit_data(
     for data in data_stream:
         extracted = _get_attributes_list(data, data_fields)
         with open(file, 'a', encoding='utf-8') as out:
-            logging.info('writing %s data to to file at: %s' % (sub_or_comm, file))
+            logger.info('writing %s data to to file at: %s' % (sub_or_comm, file))
             csv_out = csv.writer(out)
             csv_out.writerow(extracted)
 
