@@ -1,5 +1,5 @@
 import argparse
-import logging
+from loguru import logger
 from rsutils import data_utils as du
 
 parser = argparse.ArgumentParser()
@@ -33,20 +33,15 @@ parser.add_argument(
 args = parser.parse_args()
 
 if args.log:
-    logger = logging.getLogger('rsutils')
-    sh = logging.StreamHandler()
-    fh = logging.FileHandler('submissions.log')
-    formatter = logging.Formatter('%(asctime)s - %(name)s (%(levelname)s): %(message)s')
-
-    sh.setFormatter(formatter)
-    fh.setFormatter(formatter)
-    logger.addHandler(sh)
-    logger.addHandler(fh)
-
-    logger.setLevel(logging.INFO)
+    logger.remove()
+    logger.add(
+        sink='submissions.log',
+        level="INFO",
+        format="<b><c><{time}</c></b> [{name}] <level>{level.name}</level> > {message}"
+    )
 
 try:
     du.stream_subreddit_submissions(args.subreddit, args.file, args.fields)
 except:
-    logging.exception('Something horrible has happened!')
+    logger.exception('Something horrible has happened!')
     raise
