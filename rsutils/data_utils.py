@@ -228,7 +228,7 @@ def _stream_subreddit_data(
     if os.path.exists(file):
         with open(file, 'rb') as out:
             reader = csv.reader(out)
-            fields = reader.next()
+            fields = next(reader)
         if fields != data_fields:
             raise OSError(
                 f"File already exists at: {file}\nDoes not share the same data fields so data "
