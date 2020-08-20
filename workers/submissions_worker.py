@@ -1,6 +1,7 @@
 import argparse
 from loguru import logger
 from rsutils import data_utils as du
+import prawcore
 
 parser = argparse.ArgumentParser()
 
@@ -40,8 +41,12 @@ if args.log:
         format="<b><c><{time}</c></b> [{name}] <level>{level.name}</level> > {message}"
     )
 
-try:
-    du.stream_subreddit_submissions(args.subreddit, args.file, args.fields)
-except:
-    logger.exception('Something horrible has happened!')
-    raise
+while True:
+    try:
+        du.stream_subreddit_submissions(args.subreddit, args.file, args.fields)
+    except prawcore.exceptions.ServerError:
+        logger.debug('prawcore.exceptions.ServerError encountered, this could be caused by a server'
+                     ' overload. Restarting submissions stream')
+    except:
+        logger.exception('Something horrible has happened!')
+        raise
