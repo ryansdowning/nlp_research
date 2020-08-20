@@ -226,7 +226,7 @@ def _stream_subreddit_data(
 
     logger.info('Checking if file exists at: %s' % file)
     if os.path.exists(file):
-        with open(file, 'rb') as out:
+        with open(file, 'rt', encoding='utf-8') as out:
             reader = csv.reader(out)
             fields = next(reader)
         if fields != data_fields:
