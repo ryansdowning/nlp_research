@@ -50,4 +50,3 @@ while True:
                      ' overload. Restarting comments stream')
     except:
         logger.exception('Something horrible has happened!')
-        raise

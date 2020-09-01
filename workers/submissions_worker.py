@@ -49,4 +49,3 @@ while True:
                      ' overload. Restarting submissions stream')
     except:
         logger.exception('Something horrible has happened!')
-        raise
