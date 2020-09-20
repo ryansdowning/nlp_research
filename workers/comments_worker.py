@@ -37,7 +37,7 @@ args = parser.parse_args()
 if args.log:
     logger.remove()
     logger.add(
-        sink='comments.log',
+        sink=f'comments_{args.subreddit}.log',
         level="INFO",
         format="<b><c><{time}</c></b> [{name}] <level>{level.name}</level> > {message}"
     )
