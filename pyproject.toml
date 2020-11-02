@@ -12,6 +12,7 @@ transformers = "^3.0.2"
 praw = "^7.1.0"
 flashtext = "^2.7"
 loguru = "^0.5.1"
+beautifulsoup4 = "^4.9.3"
 
 [tool.poetry.dev-dependencies]
 jupyter = "^1.0.0"
