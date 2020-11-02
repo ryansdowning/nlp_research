@@ -3,11 +3,11 @@ import os
 from typing import Any, Iterable, Iterator, List, Optional, Tuple, Union
 
 import pandas as pd
-
 import praw
 from loguru import logger
-from rsutils.constants import (COMMENT_FIELDS, COMMENT_SORTS,
-                               SUBMISSION_FIELDS, SUBMISSION_SORTS, reddit)
+
+from config.constants import (
+    COMMENT_FIELDS, COMMENT_SORTS, SUBMISSION_FIELDS, SUBMISSION_SORTS, reddit)
 
 
 def get_submissions(subreddit: praw.reddit.Subreddit, sort_method: str, **kwargs) -> Iterator[Any]:
