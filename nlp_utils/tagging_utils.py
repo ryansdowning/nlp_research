@@ -103,7 +103,7 @@ def tagging_pipline(
             framework must be installed.
 
             If no framework is specified, will default to the one currently installed. If no
-            framework is specifiedand both frameworks are installed, will default to PyTorch.
+            framework is specified and both frameworks are installed, will default to PyTorch.
 
      Returns:
         `~tagging_utils.TaggingPipeline`: Class inheriting from `~transformers.Pipeline`, according
@@ -159,16 +159,19 @@ def tagging_pipline(
     else:
         device = -1
 
+    params = {
+        'model': task_class.model,
+        'tokenizer': task_class.tokenizer,
+        'modelcard': task_class.modelcard,
+        'framework': task_class.framework,
+        'args_parser': task_class._args_parser,  # pylint: disable=W0212
+        'device': device,
+        'task': task
+    }
+    if task not in ('feature-extraction', 'fill-mask'):
+        params['binary_output'] = task_class.binary_output
     # Return TaggingPipeline with the processed arguments from the task class
-    return TaggingPipeline(
-        model=task_class.model,
-        tokenizer=task_class.tokenizer,
-        modelcard=task_class.modelcard,
-        framework=task_class.framework,
-        args_parser=task_class._args_parser,  # pylint: disable=W0212
-        device=device,
-        binary_output=task_class.binary_output
-    )
+    return TaggingPipeline(**params)
 
 
 def _handle_data_and_source(

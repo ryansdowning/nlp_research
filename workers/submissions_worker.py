@@ -1,7 +1,9 @@
 import argparse
-from loguru import logger
-from rsutils import data_utils as du
+
 import prawcore
+from loguru import logger
+
+from scrape_utils import reddit_utils as ru
 
 parser = argparse.ArgumentParser()
 
@@ -43,7 +45,7 @@ if args.log:
 
 while True:
     try:
-        du.stream_subreddit_submissions(args.subreddit, args.file, args.fields)
+        ru.stream_subreddit_submissions(args.subreddit, args.file, args.fields)
     except prawcore.exceptions.ServerError:
         logger.debug('prawcore.exceptions.ServerError encountered, this could be caused by a server'
                      ' overload. Restarting submissions stream')
