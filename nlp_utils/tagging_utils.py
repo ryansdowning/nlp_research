@@ -3,9 +3,9 @@ from typing import Iterable, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
-
 from flashtext import KeywordProcessor  # pylint: disable=E0401
-from transformers import PretrainedConfig, PreTrainedTokenizer, pipeline  # pylint: disable=E0401
+from transformers import (PretrainedConfig,  # pylint: disable=E0401
+                          PreTrainedTokenizer, pipeline)
 
 TASK_SETTINGS = {
     'feature-extraction': {
