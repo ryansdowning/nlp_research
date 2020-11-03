@@ -1,11 +1,11 @@
 import csv
-import os
 from typing import Any, Iterable, Iterator, List, Optional, Tuple, Union
 
 import pandas as pd
 import praw
 from loguru import logger
 
+from scrape_utils import data_utils as du
 from config.constants import (
     COMMENT_FIELDS, COMMENT_SORTS, SUBMISSION_FIELDS, SUBMISSION_SORTS, reddit)
 
@@ -72,11 +72,15 @@ def filter_marked(
 
 
 def _get_attributes_list(obj: Any, data_fields: Iterable[str]) -> Tuple[Any]:
-    # if not set(data_fields).issubset(set(obj.__dir__())):
-    #     raise AttributeError(
-    #         f"Unexpected data fields for object with type: {type(obj)}. Attributes not available:"
-    #         f"\n{set(data_fields) - set(obj.__dir__())}"
-    #     )
+    """Gets the values of the given attributes from the object
+
+    Args:
+        obj: Object to get values from - must have all attributes in data fields parameter
+        data_fields: The attributes to extract from the object
+
+    Returns:
+        List of values extracted from the object, respective to the given data fields (in order)
+    """
     return tuple(map(lambda field: getattr(obj, field), data_fields))
 
 
@@ -134,7 +138,7 @@ def get_subreddit_submissions(
         data_fields: Optional[List[str]] = None,
         file: Optional[str] = None,
         **kwargs,
-):
+) -> pd.DataFrame:
     """Scrapes subreddit submissions and stores the data in pandas dataframe, or csv file
 
     Args:
@@ -144,6 +148,9 @@ def get_subreddit_submissions(
         file: Default None. If specified, data will be written to this file (csv)
         kwargs: Additional keyword arguments are passed into the pull request for the given
                 sort method
+
+    Returns:
+        Pandas df of submissions data - also writes df to csv if file is given
     """
     if sort_method not in SUBMISSION_SORTS:
         raise AttributeError(
@@ -172,6 +179,15 @@ def get_subreddit_submissions(
 def get_submission_comments(
         submissions: Iterable[praw.reddit.Submission], limit: Optional[int] = None
 ) -> List[praw.reddit.Comment]:
+    """Iterates through reddit submissions and extracts the comments into a 1d list of reddit comments
+
+    Args:
+        submissions: iterable of reddit submissions to get the comments from
+        limit: number of comments to pull from each submission. If None, will pull all comments
+
+    Returns:
+        list of comments extracted from the submissions
+    """
     comments = []
     for submission in submissions:
         logger.info(
@@ -189,6 +205,19 @@ def get_subreddit_submission_comments(
         file: Optional[str] = None,
         **kwargs,
 ):
+    """Scrapes all of the comments from the submissions of a given subreddit, respective to the sorting method/kwargs
+
+    Args:
+        subreddit: Name of subreddit
+        sort_method: Method of sorting to use when pulling the submissions
+        data_fields: Ordered list of attributes to extract from submissions
+        file: Default None. If specified, data will be written to this file (csv)
+        kwargs: Additional keyword arguments are passed into the pull request for the given
+                sort method for submissions
+
+    Returns:
+        Pandas df of comments data from scraped submissions - also writes daf to csv if file is given
+    """
     if data_fields is None:
         data_fields = list(COMMENT_FIELDS)
     elif not set(data_fields).issubset(COMMENT_FIELDS):
@@ -215,6 +244,19 @@ def _stream_subreddit_data(
         data_fields: List[str],
         **kwargs
 ):
+    """Creates a process that indefinitely streams data from a subreddit to a file
+
+    Args:
+        subreddit: Name of subreddit
+        sub_or_comm: identify type of data to stream: 'submissions' or 'comments'
+        file: Name of file (csv) to write data to
+        data_fields: Ordered list of attributes to extract from submissions/comments
+        kwargs: Additional keyword arguments provided to the prawcore stream function for submissions/comments
+
+    Returns:
+        None - Process runs until error is thrown or is interrupted
+        Data stream is written to the given file
+    """
     if sub_or_comm not in ('submissions', 'comments'):
         raise AttributeError("Must specify either submissions or comments for streaming data")
     sub = reddit.subreddit(subreddit)
@@ -224,22 +266,7 @@ def _stream_subreddit_data(
         else sub.stream.comments(**kwargs)
     )
 
-    logger.info('Checking if file exists at: %s' % file)
-    if os.path.exists(file):
-        with open(file, 'rt', encoding='utf-8') as out:
-            reader = csv.reader(out)
-            fields = next(reader)
-        if fields != data_fields:
-            raise OSError(
-                f"File already exists at: {file}\nDoes not share the same data fields so data "
-                f"cannot be appended. Please specify a different file path or match the existing"
-                f" data fields\nCurrent fields: {fields}"
-            )
-    else:
-        with open(file, 'w') as out:
-            csv_out = csv.writer(out)
-            csv_out.writerow(data_fields)
-
+    du.open_file_stream(file, data_fields)
     for data in data_stream:
         extracted = _get_attributes_list(data, data_fields)
         with open(file, 'a', encoding='utf-8') as out:
@@ -251,6 +278,18 @@ def _stream_subreddit_data(
 def stream_subreddit_submissions(
         subreddit: str, file: str, data_fields: Optional[List[str]] = None, **kwargs
 ):
+    """Creates a process that indefinitely streams submissions data from a subreddit to a file
+
+    Args:
+        subreddit: Name of subreddit
+        file:  Name of file (csv) to write data to
+        data_fields: Ordered list of attributes to extract from submissions
+        kwargs: Additional keyword arguments provided to the prawcore submissions stream function
+
+    Returns:
+        None - Process runs until error is thrown or is interrupted
+        Submissions data is written to the given file
+    """
     if data_fields is None:
         data_fields = list(SUBMISSION_FIELDS)
     elif not set(data_fields).issubset(SUBMISSION_FIELDS):
@@ -265,6 +304,18 @@ def stream_subreddit_submissions(
 def stream_subreddit_comments(
         subreddit: str, file: str, data_fields: Optional[List[str]] = None, **kwargs
 ):
+    """Creates a process that indefinitely streams comments data from a subreddit to a file
+
+    Args:
+        subreddit: Name of subreddit
+        file:  Name of file (csv) to write data to
+        data_fields: Ordered list of attributes to extract from comments
+        kwargs: Additional keyword arguments provided to the prawcore comments stream function
+
+    Returns:
+        None - Process runs until error is thrown or is interrupted
+        Comments data is written to the given file
+    """
     if data_fields is None:
         data_fields = list(COMMENT_FIELDS)
     elif not set(data_fields).issubset(COMMENT_FIELDS):
@@ -282,6 +333,20 @@ def _update_data(
         id_col: str = 'id',
         file: Optional[str] = None,
 ) -> pd.DataFrame:
+    """Updates reddit submissions and comments data based on their associated ids. Pulls updated data and replaces it
+    in the given dataset
+
+    Args:
+        sub_or_comm: identify type of data to update: 'submissions' or 'comments'
+        df_or_file: pandas df or a csv file containing old data (must have id column for updating)
+        id_col: Name of column to find the ids associated with the submissions or comments. This is used to pull the
+                newly updated data respective to those ids
+        file: Default None. If specified, data will be written to this file (csv)
+
+    Returns:
+        Pandas df with the same columns and shape as the original dataset, but with updated values
+        If file is not None, will output this data to a csv (file must be .csv)
+    """
     if sub_or_comm not in ('submissions', 'comments'):
         raise AttributeError("Must specify either submissions or comments for streaming data")
 
@@ -324,10 +389,36 @@ def _update_data(
 def update_submissions(
         df_or_file: Union[pd.DataFrame, str], id_col: str = 'id', file: Optional[str] = None
 ) -> pd.DataFrame:
+    """Updates reddit submissions data based on their associated ids. Pulls updated data and replaces it
+    in the given dataset
+
+    Args:
+        df_or_file: pandas df or a csv file containing old data (must have id column for updating)
+        id_col: Name of column to find the ids associated with the submissions. This is used to pull the newly updated
+                data respective to those ids
+        file: Default None. If specified, data will be written to this file (csv)
+
+    Returns:
+        Pandas df with the same columns and shape as the original dataset, but with updated values
+        If file is not None, will output this data to a csv (file must be .csv)
+    """
     return _update_data('submissions', df_or_file, id_col, file)
 
 
 def update_comments(
         df_or_file: Union[pd.DataFrame, str], id_col: str = 'id', file: Optional[str] = None
 ) -> pd.DataFrame:
+    """Updates reddit comments data based on their associated ids. Pulls updated data and replaces it
+        in the given dataset
+
+    Args:
+        df_or_file: pandas df or a csv file containing old data (must have id column for updating)
+        id_col: Name of column to find the ids associated with the comments. This is used to pull the newly updated
+                data respective to those ids
+        file: Default None. If specified, data will be written to this file (csv)
+
+    Returns:
+        Pandas df with the same columns and shape as the original dataset, but with updated values
+        If file is not None, will output this data to a csv (file must be .csv)
+    """
     return _update_data('comments', df_or_file, id_col, file)
