@@ -1,8 +1,8 @@
 import praw
 
-client_id = 'ZAUZldGjWQSpUw'
-secret = 'RWIDHgZ2wjdDWfrb7N30RRpjbyQ'
-agent = 'data_collecting'
+client_id = None
+secret = None
+agent = None
 reddit = praw.Reddit(client_id=client_id, client_secret=secret, user_agent=agent)
 
 SUBMISSION_SORTS = ('hot', 'new', 'rising', 'controversial', 'top', 'gilded')
