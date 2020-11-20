@@ -1,15 +1,15 @@
 import datetime
 import re
 import time
-from typing import Any, Dict, List, Union, Optional
 from collections import OrderedDict
+from typing import Any, Dict, List, Optional, Union
 
 import bs4
-import csv
 import requests
-from loguru import logger
 from bs4 import BeautifulSoup
+from loguru import logger
 
+from nlp_utils import db_utils as dbu
 from scrape_utils import data_utils as du
 
 BASE = 'https://www.fool.com'
@@ -90,43 +90,57 @@ def get_transcript_data(transcript_link: str) -> Dict[str, Any]:
     Returns:
         dictionary containing information elements extracted from the given earnings call transcript
     """
+    logger.info("Getting earnings transcript data for %s" % transcript_link)
     data = OrderedDict()
     call_response = requests.get(f"{BASE}{transcript_link}")
     call_soup = BeautifulSoup(call_response.text, 'html.parser')
     content_soup = call_soup.find(attrs={'class': 'article-content'})
 
+    # Date and time of transcript publication
     pub_date = (call_soup.find(attrs={'class': 'publication-date'})).text.strip()
     data['publication_date'] = datetime.datetime.strptime(pub_date, '%b %d, %Y at %I:%M%p')
+
+    # Earnings call information
+    call_text = call_soup.text.replace('\xa0', ' ')
     try:
         quarter, year, call_date, call_time = re.findall(
             r"Q(\d) (\d{4}) Earnings Call([A-Z][a-z]{2}\.? \d{1,2}, \d{4}), (\d{1,2}:\d{2} (?:a\.m\.|p\.m\.) ET)",
-            call_soup.text.replace('\xa0', ' ')
+            call_text
         )[0]
         data['fiscal_quarter'] = int(quarter)
         data['fiscal_year'] = int(year)
         data['call_date'] = datetime.datetime.strptime(call_date.replace('.', ''), '%b %d, %Y')
         data['call_time'] = call_time
     except IndexError:
+        logger.warning("Failed to get earnings call information for: %s" % transcript_link)
         data['fiscal_quarter'] = None
         data['fiscal_year'] = None
         data['call_date'] = None
         data['call_time'] = None
 
-    ticker_info = call_soup.find(attrs={'class': 'ticker', 'data-id': True}).text
+    # Company information
     try:
-        data['exchange'], data['ticker'] = re.findall(r"\((NYSE|NYSEMKT|NASDAQ|OTC):([A-Z]+\.?[A-Z])\)", ticker_info)[0]
-    except IndexError:
+        ticker_info = call_soup.find(attrs={'class': 'ticker', 'data-id': True}).text
+        data['exchange'], data['ticker'] = re.findall(
+            r"^\((NYSE|NYSEMKT|NASDAQ|OTC):([A-Z]+(?:\.[A-Z])?)\)$", ticker_info
+        )[0]
+    except (IndexError, AttributeError):
+        logger.warning("Failed to get exchange and ticker from earnings call for %s:" % transcript_link)
         data['exchange'] = None
         data['ticker'] = None
     data['company'] = content_soup.strong.text
 
+    # Format different content sections into dictionary
     data['content'] = OrderedDict()
-    titles = [li.text for li in content_soup.ul.find_all('li')]
-    headers = content_soup.find_all('h2')[1:]
-    if len(titles) != len(headers):
-        raise ValueError("Did not find header for every section in content")
-    for title, header in zip(titles, headers):
-        data['content'][title] = get_paragraph(header)
+    titles = sorted([li.text for li in content_soup.ul.find_all('li')])
+    headers = content_soup.find_all('h2')
+    if headers:
+        headers = [header for header in content_soup.find_all('h2') if header.text[:-1] in titles]
+        headers = sorted(headers, key=lambda header: header.text)
+        for title, header in zip(titles, headers):
+            data['content'][title] = get_paragraph(header)
+    else:
+        logger.warning("Failed to find content headers for: %s" % transcript_link)
     return data
 
 
@@ -181,11 +195,18 @@ def transcript_stream(data_fields: Optional[List[str]] = None, update=60):
         links = set(get_links(get_earnings_calls())) - visted_links
 
 
-def stream_earnings_transcripts(file, data_fields: Optional[List[str]] = None, update=60):
+def stream_earnings_transcripts(
+        data_fields: Optional[List[str]] = None,
+        update=60,
+        file: Optional[str] = None,
+        table: Optional[dbu.DBTable] = None,
+        **kwargs
+):
     """Creates a process that indefinitely streams data from earnings call transcripts to a csv
 
     Args:
         file: Name of file (csv) to write data to
+        table: DBTable object that can be provided to insert data directly into SQL database
         data_fields: Ordered list of attributes to extract from transcripts. If none, will use all data fields
         update: Time in seconds to wait between pull requests
 
@@ -193,16 +214,5 @@ def stream_earnings_transcripts(file, data_fields: Optional[List[str]] = None, u
         None - Process runs until error is thrown or is interrupted
         Data stream is written to the given file
     """
-    if data_fields is None:
-        data_fields = list(TRANSCRIPT_FIELDS)
-    elif not set(data_fields).issubset(TRANSCRIPT_FIELDS):
-        raise AttributeError(
-            f"Unexpected data fields for subreddit submissions:"
-            f" {set(data_fields) - set(TRANSCRIPT_FIELDS)}"
-        )
-    du.open_file_stream(file, data_fields)
-    for data in transcript_stream(data_fields, update):
-        with open(file, 'a', encoding='utf-8') as out:
-            logger.info('writing %s data to to file at: %s' % (data[0], file))
-            csv_out = csv.writer(out)
-            csv_out.writerow(data)
+    stream = transcript_stream(data_fields, update)
+    du.stream_data(stream, data_fields, file, table, **kwargs)
