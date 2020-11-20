@@ -4,8 +4,8 @@ from typing import Iterable, List, Optional, Tuple, Union
 import numpy as np
 import pandas as pd
 from flashtext import KeywordProcessor  # pylint: disable=E0401
-from transformers import (PretrainedConfig,  # pylint: disable=E0401
-                          PreTrainedTokenizer, pipeline)
+from transformers import PretrainedConfig  # pylint: disable=E0401
+from transformers import PreTrainedTokenizer, pipeline
 
 TASK_SETTINGS = {
     'feature-extraction': {
@@ -395,3 +395,22 @@ def get_keywords_occurrences(
     missing = list(set(keywords) - set(occurrences.index))
     occurrences = pd.concat((occurrences, pd.Series(0, index=missing)))
     return occurrences[keywords]  # Sort according to input
+
+
+def keyword_bool_proc(keywords, case_sensitive):
+    """Creates a process that returns a boolean value that corresponds to whether or not the passed in text contains
+    any of the provided keywords (respective to case sensitivity)
+
+    Args:
+        keywords: Iterable of strings to search for in text
+        case_sensitive: Toggle keyword case sensitivity
+
+    Returns:
+        Callable(str) -> bool that returns True if the string contains a keyword and false otherwise
+    """
+    proc = KeywordProcessor(case_sensitive=case_sensitive)
+    proc.add_keywords_from_list(keywords)
+
+    def bool_proc(text):
+        return bool(proc.extract_keywords(text))
+    return bool_proc
