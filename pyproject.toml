@@ -13,6 +13,8 @@ praw = "^7.1.0"
 flashtext = "^2.7"
 loguru = "^0.5.1"
 beautifulsoup4 = "^4.9.3"
+pyodbc = "^4.0.30"
+dash = "^1.17.0"
 
 [tool.poetry.dev-dependencies]
 jupyter = "^1.0.0"
