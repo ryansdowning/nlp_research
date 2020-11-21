@@ -23,7 +23,7 @@ class DBTable:
         cursor.execute(f"SELECT * FROM {table_name}")
         self.table_types = {col[0]: col[1] for col in cursor.description}
         self.table_info = {col[0]: col[2:] for col in cursor.description}
-        self.columns = set(self.table_types.keys())
+        self.columns = self.table_types.keys()
         cursor.close()
 
     def select(self, columns: Optional[List[str]] = None, where_cond: Optional[str] = None):
@@ -86,8 +86,8 @@ class DBTable:
                     f"If columns are provided, they must match the length of the data tuple given. Got {len(columns)}"
                     f" columns and {len(data)} data elements"
                 )
-            if columns and not set(columns).issubset(self.columns):
-                missing = self.columns - set(columns)
+            if columns and not set(columns).issubset(set(self.columns)):
+                missing = set(self.columns) - set(columns)
                 raise AttributeError(
                     f"Columns attribute contains columns not available in this data table.\nMissing: {missing}"
                 )
@@ -104,10 +104,10 @@ class DBTable:
                     " Call using tuple if columns must be specified."
                 )
 
-            columns = set(data.keys())
+            columns = tuple(data.keys())
             data = tuple(data.values())
 
-        query = f"{base_query}{','.join(columns)} VALUES {data}"
+        query = f"{base_query}({','.join(columns)}) VALUES {data}"
         cursor = self.conn.cursor()
 
         logger.info("Executing query: %s" % query)
@@ -140,8 +140,8 @@ class DBTable:
                 self.insert(data.iloc[idx:idx+chunksize])
         else:
             vals = data.values.tolist()
-            value_query = ','.join(f":{i}" for i in range(len(columns)))
-            query = f"INSERT INTO {self.table} {','.join(columns)} VALUES ({value_query})"
+            value_query = ','.join(f"?" for _ in range(len(columns)))
+            query = f"INSERT INTO {self.table} ({','.join(columns)}) VALUES ({value_query})"
 
             cursor = self.conn.cursor()
             logger.info("Executing query: %s" % query[:1000])
