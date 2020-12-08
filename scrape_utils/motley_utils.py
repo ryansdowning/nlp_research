@@ -13,9 +13,11 @@ from nlp_utils import db_utils as dbu
 from scrape_utils import data_utils as du
 
 BASE = 'https://www.fool.com'
-MAIN = '/earnings-call-transcripts'
+EARNINGS = '/earnings-call-transcripts'
+NEWS = '/investing-news/?page=1'
 TRANSCRIPT_FIELDS = ('publication_date', 'fiscal_quarter', 'fiscal_year',
                      'call_date', 'call_time', 'exchange', 'ticker', 'content')
+ARTICLE_FIELDS = ('date', 'title', 'subtitle', 'content', 'tickers')
 
 
 def get_earnings_calls() -> List[bs4.element.Tag]:
@@ -24,7 +26,7 @@ def get_earnings_calls() -> List[bs4.element.Tag]:
     Returns:
         List of 'a' href tags from beautiful soup
     """
-    main_response = requests.get(f"{BASE}{MAIN}")
+    main_response = requests.get(f"{BASE}{EARNINGS}")
     main_soup = BeautifulSoup(main_response.text, 'html.parser')
     earnings_calls = main_soup.find_all('a', attrs={'data-id': 'article-list', 'href': True})
     return earnings_calls
@@ -155,9 +157,87 @@ def get_transcripts_data(transcript_links: List[str]) -> Dict[str, Dict[str, Any
     """
     data = OrderedDict()
     for link in transcript_links:
+        data[link] = get_article_data(link)
+    return data
+
+
+def get_recent_articles() -> List[str]:
+    response = requests.get(f"{BASE}{NEWS}")
+    response.raise_for_status()
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    if stories := soup.find('div', attrs={'class': 'top-stories'}):
+        story_data = dict()
+        return [story['href'] for story in stories.find_all('a', attrs={'data-id': 'article-list'})]
+    else:
+        raise ValueError("Error encountered when fetching recent articles, article list not found!")
+
+
+def get_articles_data(article_links: List[str]) -> Dict[str, Dict[str, Any]]:
+    data = OrderedDict()
+    for link in article_links:
         data[link] = get_transcript_data(link)
     return data
 
+
+def get_article_data(article_link: str) -> Dict[str, Any]:
+    article = f"{BASE}{article_link}"
+    res = requests.get(article)
+    if res.status_code != 200:
+        if 200 < res.status_code < 300:
+            logger.warning("Article fetch successful but has non 200 status code: %d ", res.status_code)
+        else:
+            logger.error("Article fetch failed with status code: %d ", res.status_code)
+            res.raise_for_status()
+    article_soup = BeautifulSoup(res.text, 'html.parser')
+    data = OrderedDict()
+    
+    if pub_date := article_soup.find('div', attrs={'class': 'publication-date'}):
+        data['date'] = datetime.datetime.strptime(pub_date.text.strip(), '%b %d, %Y at %I:%M%p')
+    else:
+        logger.warning("Failed to find date for article: %s", article_link)
+        data['date'] = None
+    
+    if title := article_soup.find('div', attrs={'id': 'adv_text', 'class': 'adv-heading'}):
+        try:
+            title = title.next_sibling.next_sibling
+            data['title'] = title.text.strip()
+        except AttributeError as err:
+            logger.warning("Failed to find to find title for article: %s", article_link)
+            data['title'] = None
+        try:
+            data['subtitle'] = title.next_sibling.next_sibling.text.strip()
+        except AttributeError as err:
+            logger.warning("Failed to find subtitle for article: %s", article_link)
+            data['subtitle'] = None
+    else:
+        logger.warning("Failed to find title and subtitle div for article: %s", article_link)
+        data['subtitle'] = None
+        data['title'] = None
+
+    if author := article_soup.find('div', attrs={'class': 'author-name'}):
+        if name := author.find('a'):
+                data['author'] = name.text.strip()
+        else:
+            logger.warning("Failed to find author name for article: %s", article_link)
+            data['author'] = None
+    else:
+        logger.warning("Failed to find author div for article: %s", article_link)
+        data['author'] = None
+    
+    if article_content := article_soup.find('span', attrs={'class': 'article-content'}):
+        article_text = re.sub(r"\n{2,}", r"\n", article_content.text.strip())
+        data['content'] = article_text
+    else:
+        logger.warning("Failed to find content for article: %s", article_link)
+        data['content'] = None
+    
+    tickers = article_content.find_all('span', attrs={'class': 'ticker'})
+    tickers = [re.match(r"\((?P<exchange>[A-Z]+):(?P<ticker>[A-Z]+)\)", ticker.text.strip()) for ticker in tickers]
+    tickers = {(ticker.group('exchange'), ticker.group('ticker')) for ticker in tickers if ticker}
+    data['tickers'] = tickers
+
+    return data
 
 def transcript_stream(data_fields: Optional[List[str]] = None, update=60):
     """Creates generator object that will stream transcript data
