@@ -264,7 +264,7 @@ def stream_subreddit_submissions(
         data_fields: Ordered list of attributes to extract from submissions
         file:  Name of file (csv) to write data to
         table: DBTable object that can be provided to insert data directly into SQL database
-        kwargs: Additional keyword arguments provided to the prawcore submissions stream function
+        kwargs: Additional keyword arguments for streaming data
 
     Returns:
         None - Process runs until error is thrown or is interrupted
@@ -278,8 +278,8 @@ def stream_subreddit_submissions(
             f" {set(data_fields) - set(SUBMISSION_FIELDS)}"
         )
 
-    stream = subreddit_data_stream(subreddit, 'submissions', data_fields, **kwargs)
-    du.stream_data(stream=stream, data_fields=data_fields, file=file, table=table)
+    stream = subreddit_data_stream(subreddit, 'submissions', data_fields)
+    du.stream_data(stream=stream, data_fields=data_fields, file=file, table=table, **kwargs)
 
 
 def stream_subreddit_comments(
@@ -296,7 +296,7 @@ def stream_subreddit_comments(
         data_fields: Ordered list of attributes to extract from comments
         file:  Name of file (csv) to write data to
         table: DBTable object that can be provided to insert data directly into SQL database
-        kwargs: Additional keyword arguments provided to the prawcore comments stream function
+        kwargs: Additional keyword arguments for streaming data
 
     Returns:
         None - Process runs until error is thrown or is interrupted
@@ -310,8 +310,8 @@ def stream_subreddit_comments(
             f" {set(data_fields) - set(COMMENT_FIELDS)}"
         )
 
-    stream = subreddit_data_stream(subreddit, 'comments', data_fields, **kwargs)
-    du.stream_data(stream, data_fields, file, table)
+    stream = subreddit_data_stream(subreddit, 'comments', data_fields)
+    du.stream_data(stream, data_fields, file, table, **kwargs)
 
 
 def _update_data(
