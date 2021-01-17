@@ -3,7 +3,7 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 import numpy as np
 import pandas as pd
 import pyodbc
-from collections import OrderedSet, OrderedDict
+from collections import OrderedDict
 from loguru import logger
 
 Record = Union[Dict[str, Any], Tuple[Any]]
@@ -24,9 +24,9 @@ class DBTable:
 
         cursor = self.conn.cursor()
         cursor.execute(f"SELECT * FROM {table_name}")
-        self.table_types = OrderedDict(col[0]: col[1] for col in cursor.description)
-        self.table_info = OrderedDict(col[0]: col[2:] for col in cursor.description)
-        self.columns = OrderedSet(self.table_types.keys())
+        self.table_types = OrderedDict((col[0], col[1]) for col in cursor.description)
+        self.table_info = OrderedDict((col[0], col[2:]) for col in cursor.description)
+        self.columns = set(self.table_types.keys())
 
         if load:
             self.data = self.select()
