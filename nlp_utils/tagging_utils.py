@@ -6,6 +6,9 @@ import pandas as pd
 from flashtext import KeywordProcessor  # pylint: disable=E0401
 from transformers import PretrainedConfig  # pylint: disable=E0401
 from transformers import PreTrainedTokenizer, pipeline
+from tqdm import tqdm
+
+tqdm.pandas()
 
 TASK_SETTINGS = {
     'feature-extraction': {
@@ -51,6 +54,8 @@ def tagging_pipline(
         config: Optional[Union[str, PretrainedConfig]] = None,
         tokenizer: Optional[Union[str, PreTrainedTokenizer]] = None,
         framework: Optional[str] = None,
+        revision: Optional[str] = None,
+        use_fast: bool = True,
         **kwargs
 ) -> 'TaggingPipeline':
     """Utility factory method to build a tagging pipeline.
@@ -98,12 +103,19 @@ def tagging_pipline(
             `~transformers.PreTrainedTokenizer`.
 
             If `None`, the default for this pipeline will be loaded.
-        framework (`str`, `optional`, defaults to `None`):
+        framework (str):
             The framework to use, either "pt" for PyTorch or "tf" for TensorFlow. The specified
             framework must be installed.
 
             If no framework is specified, will default to the one currently installed. If no
             framework is specified and both frameworks are installed, will default to PyTorch.
+         revision(str):
+            When passing a task name or a string model identifier: The specific model version to use. It can be a
+            branch name, a tag name, or a commit id, since we use a git-based system for storing models and other
+            artifacts on huggingface.co, so ``revision`` can be any identifier allowed by git.
+
+        use_fast (bool):
+            Whether or not to use a Fast tokenizer if possible (a :class:`~transformers.PreTrainedTokenizerFast`).
 
      Returns:
         `~tagging_utils.TaggingPipeline`: Class inheriting from `~transformers.Pipeline`, according
@@ -118,7 +130,14 @@ def tagging_pipline(
 
     # Otherwise, get pipeline from transformers
     task_class = pipeline(
-        task=task, model=model, config=config, tokenizer=tokenizer, framework=framework, **kwargs
+        task=task,
+        model=model,
+        config=config,
+        tokenizer=tokenizer,
+        framework=framework,
+        revision=revision,
+        use_fast=use_fast,
+        **kwargs
     )
 
     class TaggingPipeline(type(task_class)):  # pylint: disable=R0903
@@ -141,7 +160,7 @@ def tagging_pipline(
             # Iterate through source columns and apply parent pipeline to each element with
             # the given args and kwargs
             for col in source:
-                data[f"{col}{tag_suffix}"] = data[col].apply(
+                data[f"{col}{tag_suffix}"] = data[col].progress_apply(
                     lambda text: super(TaggingPipeline, self).__call__(text, *args, **kwargs_)
                 )
 
@@ -164,7 +183,6 @@ def tagging_pipline(
         'tokenizer': task_class.tokenizer,
         'modelcard': task_class.modelcard,
         'framework': task_class.framework,
-        'args_parser': task_class._args_parser,  # pylint: disable=W0212
         'device': device,
         'task': task
     }
