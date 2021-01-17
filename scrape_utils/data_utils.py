@@ -1,7 +1,9 @@
 import csv
 import os
-from typing import Any, Generator, Iterable, List, Optional, Tuple
+import re
+from typing import Any, Generator, Iterable, List, Optional, Tuple, Union
 
+import bs4
 from loguru import logger
 
 from nlp_utils import db_utils as dbu
@@ -79,6 +81,42 @@ def get_data_fields(data: Iterable[Any], fields: Iterable[str]):
     return [get_attributes_list(point, fields) for point in data]
 
 
+def next_element(elem: bs4.element.Tag) -> Union[bs4.element.Tag, None]:
+    """Returns the next sibling of a beautiful soup tag
+
+    Args:
+        elem: Current beautiful soup tag element
+
+    Returns:
+         Next sibling of the given element - Returns None if no next sibling available
+    """
+    while elem is not None:
+        # Find next element, skip NavigableString objects
+        elem = elem.next_sibling
+        if hasattr(elem, 'name'):
+            return elem
+    return None
+
+
+def get_paragraph(header: bs4.element.Tag) -> str:
+    """Extracts the text under a given header element. Continues until header of same level is found
+
+    Args:
+        header: beautiful soup tag of a header to start extracting text at
+
+    Returns:
+        string of all the text under the given header until the next header of equal level is found
+    """
+    page = [header.text]
+    elem = next_element(header)
+    while elem and elem.name != header.name:
+        s = elem.string
+        if s:
+            page.append(s)
+        elem = next_element(elem)
+    return re.sub(r"\s{2,}", '\n', '\n'.join(page))
+
+
 def stream_data(
         stream: Generator[Any, None, None],
         data_fields: List[str] = None,
@@ -87,24 +125,23 @@ def stream_data(
         keywords: Optional[List[str]] = None,
         keyword_fields: Optional[str] = None,
         case_sensitive: bool = None,
-        **kwargs
 ):
     """Creates a process that indefinitely streams data from a subreddit to a file
 
     Args:
         stream: Generator that outputs a stream of data corresponding to the given data fields
         data_fields: Ordered list of attributes to extract from submissions/comments
-        keywords: If None, this argument has no affect. If keywords are provided, comments are submissions are filtered
+        keywords: If None, this argument has no affect. If keywords are provided, comments and submissions are filtered
                   if they do not contain a keyword in their body or selftext respectively
         keyword_fields: String corresponding to the data field(s) to match keywords for. If multiple are provided, the
                        fields will be joined by a space before searching for keywords.
         case_sensitive: If keywords are provided, flag for case sensitive matching. Default True, on.
-        file: Name of file (csv) to write data to
+        file: Path to file (csv) to write data to
         table: DBTable object that can be provided to insert data directly into SQL database
 
     Returns:
         None - Process runs until error is thrown or is interrupted
-        Data stream is written to the given file
+        Data stream is written to the given file or SQL table
     """
     if not file and not table:
         raise AttributeError("Must provide at least one of <file> or <table> parameters to stream data to!")
@@ -133,7 +170,7 @@ def stream_data(
     cols = ', '.join(data_fields)
     for data in stream:
         if proc is not None:  # If filtering for keywords, run keyword check on keyword fields
-            keyword_data = ' '.join(data[idx] for idx in idxs)
+            keyword_data = ' '.join(str(data[idx]) for idx in idxs)
             if not proc(keyword_data):  # If no match, skip this iteration
                 continue
         if table:
