@@ -3,9 +3,9 @@ import argparse
 import prawcore
 from loguru import logger
 
-from config.db_config import conn
-from nlp_utils import db_utils as dbu
-from scrape_utils import reddit_utils as ru
+from sentiment.config.db_config import conn
+from sentiment.nlp_utils import db_utils as dbu
+from sentiment.scrape_utils import reddit_utils as ru
 
 parser = argparse.ArgumentParser()
 

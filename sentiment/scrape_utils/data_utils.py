@@ -6,8 +6,8 @@ from typing import Any, Generator, Iterable, List, Optional, Tuple, Union
 import bs4
 from loguru import logger
 
-from nlp_utils import db_utils as dbu
-from nlp_utils import tagging_utils as tu
+from sentiment.nlp_utils import db_utils as dbu
+from sentiment.nlp_utils import tagging_utils as tu
 
 
 def open_file_stream(file: str, data_fields: List[str]):

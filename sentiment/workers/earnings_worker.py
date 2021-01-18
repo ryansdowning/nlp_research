@@ -1,20 +1,20 @@
 import argparse
+import datetime
 
-import prawcore
 from loguru import logger
 
-from config.db_config import conn
-from nlp_utils import db_utils as dbu
-from scrape_utils import reddit_utils as ru
+from sentiment.config.db_config import conn
+from sentiment.nlp_utils import db_utils as dbu
+from sentiment.scrape_utils import earnings_utils as eu
 
 parser = argparse.ArgumentParser()
 
 parser.add_argument(
-    '-s',
-    '--subreddit',
-    default='investing',
-    type=str,
-    help="subreddit to get comments from",
+    '-u',
+    '--update',
+    default=60,
+    type=int,
+    help="How often (in seconds) to query for new results"
 )
 parser.add_argument(
     '--fields',
@@ -48,7 +48,7 @@ args = parser.parse_args()
 if args.log:
     logger.remove()
     logger.add(
-        sink=f'submissions_{args.subreddit}.log',
+        sink=f'earnings_transcripts_{datetime.date.today()}.log',
         level="INFO",
         format="<b><c><{time}</c></b> [{name}] <level>{level.name}</level> > {message}"
     )
@@ -60,11 +60,6 @@ else:
 
 while True:
     try:
-        ru.stream_subreddit_submissions(
-            subreddit=args.subreddit, data_fields=args.fields, file=args.file, table=db_table
-        )
-    except prawcore.exceptions.ServerError:
-        logger.debug('prawcore.exceptions.ServerError encountered, this could be caused by a server'
-                     ' overload. Restarting submissions stream')
+        eu.stream_earnings_transcripts(args.file, args.fields, args.update)
     except:
         logger.exception('Something horrible has happened!')

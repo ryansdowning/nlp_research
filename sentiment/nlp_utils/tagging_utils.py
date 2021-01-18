@@ -46,6 +46,7 @@ TASK_SETTINGS = {
     }
 }
 SENTIMENT_MODEL = 'distilbert-base-uncased-finetuned-sst-2-english'
+SENTIMENT_SUMMARY = {'sum', 'count'}
 
 
 def tagging_pipline(
@@ -305,9 +306,9 @@ def _multi_hot_encode(labels):
         The return shape is num_unique_labels x len(labels)
     """
     # Flatten labels and get unique values (ordered)
-    unique_labels = np.unique(np.concatenate(labels, axis=0))
+    unique_labels = pd.Series(np.unique(np.concatenate(labels, axis=0)))
 
-    def _get_encoding(label, unique):
+    def _get_encoding(label):
         """Helper function to transform label to multi-hot from unique values vector
 
         Args:
@@ -318,9 +319,9 @@ def _multi_hot_encode(labels):
              Series with same length as [unique], each position containing a 1 if value was found
              in [label] and 0 otherwise
         """
-        return pd.Series(unique).isin(label).astype(int)
+        return unique_labels.isin(label).astype(int)
 
-    encoded = pd.Series(labels).apply(lambda label: _get_encoding(label, unique_labels))
+    encoded = pd.Series(labels).apply(_get_encoding)
     encoded.columns = unique_labels
     return encoded
 
@@ -331,6 +332,7 @@ def get_keywords_sentiment(
         source: str = 'text',
         case_sensitive: bool = True,
         model_name_or_path: str = SENTIMENT_MODEL,
+        summarize: str = 'sum',
 ) -> pd.Series:
     """Calculates the difference in the number of positively and negatively predicted keywords found
     throughout the given source texts
@@ -343,9 +345,10 @@ def get_keywords_sentiment(
         model_name_or_path: name of transformers model to use or path to a model on local machine
 
     Returns:
-        Series containing the sentiment scores for the corresponding keywords
-        Index is same order as keywords input
+        Series containing the sentiment scores for the corresponding keywords in same order as keywords input
     """
+    if (summarize := summarize.casefold()) not in SENTIMENT_SUMMARY:
+        raise AttributeError(f"Summarize currently supports: {SENTIMENT_SUMMARY}, got: {summarize}")
     # Remove rows without any keywords
     data = apply_keywords_tags(df_or_file, keywords, source, case_sensitive)
     if not any(data[f"{source}{TASK_SETTINGS['keywords']['suffix']}"].astype(bool)):
@@ -357,9 +360,7 @@ def get_keywords_sentiment(
     data = sentiment_tagger(data, source)
 
     def _label_to_score(label):
-        """Helper function to transform sentiment output to [-1, 1] values respective to [NEGATIVE,
-        POSITIVE]
-        """
+        """Helper function to transform sentiment output to [-1, 1] values respective to [NEGATIVE, POSITIVE]"""
         try:
             return 1 if label[0]['label'] == 'POSITIVE' else -1
         except TypeError:
@@ -373,11 +374,22 @@ def get_keywords_sentiment(
     # Encode keyword vectors and multiply them against the sentiment score to get keyword scores
     encoded = _multi_hot_encode(data[f"{source}{TASK_SETTINGS['keywords']['suffix']}"].values)
     keyword_scores = encoded.T * data['sentiment_score'].values
-    keyword_scores = keyword_scores.sum(axis=1)
+
+    default = None
+    if summarize == 'sum':
+        keyword_scores = keyword_scores.sum(axis=1)
+        default = 0
+    elif summarize == 'count':
+        def _sentiment_tuple(score_row):
+            return (score_row == 1).sum(), (score_row == -1).sum()
+
+        keyword_scores = keyword_scores.apply(_sentiment_tuple, axis=1)
+        default = (0, 0)
 
     # Fill keywords without any matches to a sentiment of 0
     missing = list(set(keywords) - set(keyword_scores.index))
-    keyword_scores = pd.concat((keyword_scores, pd.Series(0, index=missing)))
+    missing_scores = pd.Series([default] * len(missing), index=missing)
+    keyword_scores = pd.concat((keyword_scores, missing_scores))
     return keyword_scores[keywords]  # Sort according to input
 
 

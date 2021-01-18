@@ -6,8 +6,8 @@ from loguru import logger
 
 from config.constants import (COMMENT_FIELDS, SUBMISSION_FIELDS,
                               SUBMISSION_SORTS, reddit)
-from nlp_utils import db_utils as dbu
-from scrape_utils import data_utils as du
+from sentiment.nlp_utils import db_utils as dbu
+from sentiment.scrape_utils import data_utils as du
 
 
 def get_submissions(subreddit: praw.reddit.Subreddit, sort_method: str, **kwargs) -> Iterator[Any]:

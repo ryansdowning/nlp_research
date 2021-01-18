@@ -8,7 +8,7 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = ">=3.8"
 pandas = "^1.1.0"
-transformers = "^3.0.2"
+transformers = "4.2.0"
 praw = "^7.1.0"
 flashtext = "^2.7"
 loguru = "^0.5.1"
@@ -21,10 +21,12 @@ seaborn = "^0.11.0"
 tqdm = "^4.54.1"
 torch = "^1.7.1"
 torchvision = "^0.8.2"
+pydata-sphinx-theme = "^0.4.1"
 
 [tool.poetry.dev-dependencies]
 jupyter = "^1.0.0"
 jupyterlab = "^2.2.4"
+Sphinx = "^3.4.3"
 
 [build-system]
 requires = ["poetry>=0.12"]
