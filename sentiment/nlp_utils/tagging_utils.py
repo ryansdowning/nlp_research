@@ -3,62 +3,45 @@ from typing import Iterable, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
+import torch
 from flashtext import KeywordProcessor  # pylint: disable=E0401
+from tqdm import tqdm
 from transformers import PretrainedConfig  # pylint: disable=E0401
 from transformers import PreTrainedTokenizer, pipeline
-from tqdm import tqdm
 
 tqdm.pandas()
+torch.backends.cudnn.enabled = True
 
 TASK_SETTINGS = {
-    'feature-extraction': {
-        'suffix': '_extracted'
-    },
-    'sentiment-analysis': {
-        'suffix': '_sentiment'
-    },
-    'ner': {
-        'suffix': '_nertag'
-    },
-    'question-answering': {
-        'suffix': '_qa'
-    },
-    'fill-mask': {
-        'suffix': '_fill'
-    },
-    'summarization': {
-        'suffix': '_summarization'
-    },
-    'translation_en_to_fr': {
-        'suffix': '_en_to_fr'
-    },
-    'translation_en_to_de': {
-        'suffix': '_en_to_de'
-    },
-    'translation_en_to_ro': {
-        'suffix': '_en_to_ro'
-    },
-    'text-generation': {
-        'suffix': '_generation'
-    },
-    'keywords': {
-        'suffix': '_keywords'
-    }
+    "feature-extraction": {"suffix": "_extracted"},
+    "sentiment-analysis": {"suffix": "_sentiment"},
+    "ner": {"suffix": "_nertag"},
+    "question-answering": {"suffix": "_qa"},
+    "fill-mask": {"suffix": "_fill"},
+    "summarization": {"suffix": "_summarization"},
+    "translation_en_to_fr": {"suffix": "_en_to_fr"},
+    "translation_en_to_de": {"suffix": "_en_to_de"},
+    "translation_en_to_ro": {"suffix": "_en_to_ro"},
+    "text-generation": {"suffix": "_generation"},
+    "text2text-generation": {"suffix": "_txt2txt_generation"},
+    "zero-shot-classification": {"suffix": "_zero_shot"},
+    "conversation": {"suffix": "_conversation"},
+    "keywords": {"suffix": "_keywords"},
 }
-SENTIMENT_MODEL = 'distilbert-base-uncased-finetuned-sst-2-english'
-SENTIMENT_SUMMARY = {'sum', 'count'}
+SENTIMENT_MODEL = "distilbert-base-uncased-finetuned-sst-2-english"
+SENTIMENT_SUMMARY = {"sum", "count"}
 
 
-def tagging_pipline(
-        task: str,
-        model: Optional = None,
-        config: Optional[Union[str, PretrainedConfig]] = None,
-        tokenizer: Optional[Union[str, PreTrainedTokenizer]] = None,
-        framework: Optional[str] = None,
-        revision: Optional[str] = None,
-        use_fast: bool = True,
-        **kwargs
-) -> 'TaggingPipeline':
+def tagging_pipeline(
+    task: str,
+    model: Optional = None,
+    config: Optional[Union[str, PretrainedConfig]] = None,
+    tokenizer: Optional[Union[str, PreTrainedTokenizer]] = None,
+    framework: Optional[str] = None,
+    revision: Optional[str] = None,
+    use_fast: bool = True,
+    **kwargs,
+) -> "TaggingPipeline":
     """Utility factory method to build a tagging pipeline.
 
     A TaggingPipeline is a pipeline provided by transformers with its __call__ method overriden.
@@ -126,7 +109,7 @@ def tagging_pipline(
 
     task = task.casefold()
     # Handle special cases (not transformers pipelines)
-    if task == 'keywords':
+    if task == "keywords":
         return apply_keywords_tags
 
     # Otherwise, get pipeline from transformers
@@ -138,7 +121,7 @@ def tagging_pipline(
         framework=framework,
         revision=revision,
         use_fast=use_fast,
-        **kwargs
+        **kwargs,
     )
 
     class TaggingPipeline(type(task_class)):  # pylint: disable=R0903
@@ -147,23 +130,30 @@ def tagging_pipline(
 
         Also provides functionality to implement non-transformers tagging services, such as keywords
         """
+
         def __call__(  # pylint: disable=W1113
-                self,
-                df_or_file: Union[str, pd.DataFrame],
-                source: Union[str, List[str]] = 'text',
-                tag_suffix: Optional[str] = None,
-                file: Optional[str] = None,
-                *args,
-                **kwargs_
+            self,
+            df_or_file: Union[str, pd.DataFrame],
+            source: Union[str, List[str]] = "text",
+            tag_suffix: Optional[str] = None,
+            file: Optional[str] = None,
+            *args,
+            **kwargs_,
         ):
-            tag_suffix = tag_suffix or TASK_SETTINGS[task]['suffix']
+            _backend_state = torch.backends.cudnn.benchmark
+            torch.backends.cudnn.benchmark = True
+
+            tag_suffix = tag_suffix or TASK_SETTINGS[task]["suffix"]
             data, source = _handle_data_and_source(df_or_file, source)
             # Iterate through source columns and apply parent pipeline to each element with
             # the given args and kwargs
             for col in source:
-                data[f"{col}{tag_suffix}"] = data[col].progress_apply(
+                tmp = data[col].progress_apply(
                     lambda text: super(TaggingPipeline, self).__call__(text, *args, **kwargs_)
                 )
+                data.loc[:, f"{col}{tag_suffix}"] = tmp
+
+            torch.backends.cudnn.benchmark = _backend_state
 
             # If a file is given, save to file as well
             if file is not None:
@@ -180,21 +170,21 @@ def tagging_pipline(
         device = -1
 
     params = {
-        'model': task_class.model,
-        'tokenizer': task_class.tokenizer,
-        'modelcard': task_class.modelcard,
-        'framework': task_class.framework,
-        'device': device,
-        'task': task
+        "model": task_class.model,
+        "tokenizer": task_class.tokenizer,
+        "modelcard": task_class.modelcard,
+        "framework": task_class.framework,
+        "device": device,
+        "task": task,
     }
-    if task not in ('feature-extraction', 'fill-mask'):
-        params['binary_output'] = task_class.binary_output
+    if task not in ("feature-extraction", "fill-mask"):
+        params["binary_output"] = task_class.binary_output
     # Return TaggingPipeline with the processed arguments from the task class
     return TaggingPipeline(**params)
 
 
 def _handle_data_and_source(
-        df_or_file: Union[str, pd.DataFrame], source: Union[str, List[str]]
+    df_or_file: Union[str, pd.DataFrame], source: Union[str, List[str]]
 ) -> Tuple[pd.DataFrame, List[str]]:
     """Helper function to handle data and source inputs for common functions
 
@@ -219,13 +209,13 @@ def _handle_data_and_source(
 
 
 def apply_keywords_tags(  # pylint: disable=R0913
-        df_or_file: Union[str, pd.DataFrame],
-        keywords: Iterable[str],
-        source: Union[str, List[str]] = 'text',
-        case_sensitive: bool = True,
-        span: bool = False,
-        tag_suffix: str = TASK_SETTINGS['keywords']['suffix'],
-        file: Optional[str] = None,
+    df_or_file: Union[str, pd.DataFrame],
+    keywords: Iterable[str],
+    source: Union[str, List[str]] = "text",
+    case_sensitive: bool = True,
+    span: bool = False,
+    tag_suffix: str = TASK_SETTINGS["keywords"]["suffix"],
+    file: Optional[str] = None,
 ) -> pd.DataFrame:
     """Inserts keyword column to given dataframe which is of type: List[str] of the keywords
     found in the [source] column
@@ -250,9 +240,7 @@ def apply_keywords_tags(  # pylint: disable=R0913
 
     # Extract keywords from all elements of each source column
     for col in source:
-        data[f"{col}{tag_suffix}"] = data[col].apply(
-            lambda sent: proc.extract_keywords(sent, span_info=span)
-        )
+        data[f"{col}{tag_suffix}"] = data[col].progress_apply(lambda sent: proc.extract_keywords(sent, span_info=span))
 
     # If file is provided, save to file as well
     if file is not None:
@@ -261,10 +249,7 @@ def apply_keywords_tags(  # pylint: disable=R0913
 
 
 def filter_keywords(
-        data: pd.DataFrame,
-        keywords: Iterable[str],
-        source: Union[str, List[str]] = 'text',
-        case_sensitive: bool = True
+    data: pd.DataFrame, keywords: Iterable[str], source: Union[str, List[str]] = "text", case_sensitive: bool = True
 ) -> pd.DataFrame:
     """Filters out rows that do not have any keywords in any source column(s)
 
@@ -285,9 +270,7 @@ def filter_keywords(
     if isinstance(source, str):
         mask = data[source].apply(lambda sent: bool(proc.extract_keywords(sent)))
     else:
-        mask = data[source].apply(
-            lambda sents: any(bool(proc.extract_keywords(sent)) for sent in sents)
-        )
+        mask = data[source].apply(lambda sents: any(bool(proc.extract_keywords(sent)) for sent in sents))
     output = data[mask]  # Use mask to filter out rows without any keywords
     return output
 
@@ -327,12 +310,12 @@ def _multi_hot_encode(labels):
 
 
 def get_keywords_sentiment(
-        df_or_file: Union[pd.DataFrame, str],
-        keywords: List[str],
-        source: str = 'text',
-        case_sensitive: bool = True,
-        model_name_or_path: str = SENTIMENT_MODEL,
-        summarize: str = 'sum',
+    df_or_file: Union[pd.DataFrame, str],
+    keywords: List[str],
+    source: str = "text",
+    case_sensitive: bool = True,
+    model_name_or_path: str = SENTIMENT_MODEL,
+    summarize: str = "sum",
 ) -> pd.Series:
     """Calculates the difference in the number of positively and negatively predicted keywords found
     throughout the given source texts
@@ -356,30 +339,31 @@ def get_keywords_sentiment(
     data = data[data[f"{source}{TASK_SETTINGS['keywords']['suffix']}"].astype(bool)]
 
     # Get sentiment with (-1, 1) labels
-    sentiment_tagger = tagging_pipline('sentiment-analysis', model_name_or_path)
+    sentiment_tagger = tagging_pipeline("sentiment-analysis", model_name_or_path)
     data = sentiment_tagger(data, source)
 
     def _label_to_score(label):
         """Helper function to transform sentiment output to [-1, 1] values respective to [NEGATIVE, POSITIVE]"""
         try:
-            return 1 if label[0]['label'] == 'POSITIVE' else -1
+            return 1 if label[0]["label"] == "POSITIVE" else -1
         except TypeError:
             return 0
 
     # Convert label to int
-    data['sentiment_score'] = data[
-        f"{source}{TASK_SETTINGS['sentiment-analysis']['suffix']}"
-    ].apply(_label_to_score)
+    data.loc[:, "sentiment_score"] = data[f"{source}{TASK_SETTINGS['sentiment-analysis']['suffix']}"].apply(
+        _label_to_score
+    )
 
     # Encode keyword vectors and multiply them against the sentiment score to get keyword scores
     encoded = _multi_hot_encode(data[f"{source}{TASK_SETTINGS['keywords']['suffix']}"].values)
-    keyword_scores = encoded.T * data['sentiment_score'].values
+    keyword_scores = encoded.T * data["sentiment_score"].values
 
     default = None
-    if summarize == 'sum':
+    if summarize == "sum":
         keyword_scores = keyword_scores.sum(axis=1)
         default = 0
-    elif summarize == 'count':
+    elif summarize == "count":
+
         def _sentiment_tuple(score_row):
             return (score_row == 1).sum(), (score_row == -1).sum()
 
@@ -394,10 +378,7 @@ def get_keywords_sentiment(
 
 
 def get_keywords_occurrences(
-        df_or_file: Union[pd.DataFrame, str],
-        keywords: List[str],
-        source: str = 'text',
-        case_sensitive: bool = True
+    df_or_file: Union[pd.DataFrame, str], keywords: List[str], source: str = "text", case_sensitive: bool = True
 ):
     """Counts the occurrences of each keyword found throughout the given source texts
 
@@ -443,4 +424,5 @@ def keyword_bool_proc(keywords, case_sensitive):
 
     def bool_proc(text):
         return bool(proc.extract_keywords(text))
+
     return bool_proc

@@ -1,9 +1,9 @@
+from collections import OrderedDict
 from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
 import pyodbc
-from collections import OrderedDict
 from loguru import logger
 
 Record = Union[Dict[str, Any], Tuple[Any]]
@@ -13,6 +13,7 @@ class DBTable:
     """
     Class for interacting with an SQL table within a given database
     """
+
     def __init__(self, connection: pyodbc.Connection, table_name: str, load: bool = False):
         """
         Args:
@@ -35,6 +36,9 @@ class DBTable:
         cursor.close()
 
     def load_data(self):
+        """
+        Load all data from table into `data` attribute
+        """
         self.data = self.select()
 
     def select(self, columns: Optional[List[str]] = None, where_cond: Optional[str] = None):
@@ -48,7 +52,7 @@ class DBTable:
 
         """
         if not columns:
-            columns = ['*']
+            columns = ["*"]
         elif not set(columns).issubset(self.columns):
             missing = self.columns - set(columns)
             raise AttributeError(
@@ -68,7 +72,7 @@ class DBTable:
             logger.error("Last query failed to return any data!")
             raise ValueError("Query did not return any data, are you sure this is a valid query?")
 
-        output_cols = self.columns if columns == ['*'] else columns
+        output_cols = self.columns if columns == ["*"] else columns
         data = np.array(data).T
 
         return pd.DataFrame({col: values for col, values in zip(output_cols, data)})
@@ -119,27 +123,28 @@ class DBTable:
             chunk_iter = list(range(0, data.shape[0], chunksize))
             n = len(chunk_iter)
             for i, idx in enumerate(chunk_iter):
-                logger.info('Inserting chunk %d of %d' % (i, n))
-                self.insert_df(data.iloc[idx:idx+chunksize])
+                logger.info("Inserting chunk %d of %d" % (i, n))
+                self.insert_df(data.iloc[idx : idx + chunksize])
         else:
             vals = data.values.tolist()
-            value_query = ','.join(f":{i}" for i in range(len(columns)))
+            value_query = ",".join(f":{i}" for i in range(len(columns)))
             query = f"INSERT INTO {self.table} {','.join(columns)} VALUES ({value_query})"
 
             cursor = self.conn.cursor()
-            logger.info("Executing many query: %s\nData has length: %d" % (query, len(vals)))            
+            logger.info("Executing many query: %s\nData has length: %d" % (query, len(vals)))
             cursor.executemany(query, vals)
             cursor.commit()
             cursor.close()
-        
+
         return True
 
     def insert_many(
-            self, records: Iterable[Record],
-            columns: Optional[Iterable[str]] = None,
-            chunksize: Optional[int] = None,
-            default: Optional[Any] = None
-        ) -> bool:
+        self,
+        records: Iterable[Record],
+        columns: Optional[Iterable[str]] = None,
+        chunksize: Optional[int] = None,
+        default: Optional[Any] = None,
+    ) -> bool:
         """
 
         Args:
@@ -165,12 +170,12 @@ class DBTable:
                     except StopIteration:
                         records = None
                         break
-            logger.info('Inserting chunk: rows %d to %d', (_chunk_row, _chunk_row + len(chunk)))
+            logger.info("Inserting chunk: rows %d to %d", (_chunk_row, _chunk_row + len(chunk)))
             _chunk_row += len(chunk)
             self.insert_many(records=chunk, columns=columns, default=default)
         else:
             records = [self.get_standard_record(record, columns) for record in records]
-             # Convert to dataframe to put into column
+            # Convert to dataframe to put into column
             data = pd.DataFrame.from_records(records).fillna(default)
             return self.insert_df(data)
 
