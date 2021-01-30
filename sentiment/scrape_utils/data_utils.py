@@ -1,6 +1,7 @@
 import csv
 import os
 import re
+import time
 from typing import Any, Generator, Iterable, List, Optional, Tuple, Union
 
 import bs4
@@ -20,9 +21,9 @@ def open_file_stream(file: str, data_fields: List[str]):
     Returns:
         returns 0 if preparing the file was successful, produces an error otherwise
     """
-    logger.info('Checking if file exists at: %s' % file)
+    logger.info("Checking if file exists at: %s" % file)
     if os.path.exists(file):
-        with open(file, 'rt', encoding='utf-8') as out:
+        with open(file, "rt", encoding="utf-8") as out:
             reader = csv.reader(out)
             fields = next(reader)
         if fields != data_fields:
@@ -32,7 +33,7 @@ def open_file_stream(file: str, data_fields: List[str]):
                 f" data fields\nCurrent fields: {fields}"
             )
     else:
-        with open(file, 'w') as out:
+        with open(file, "w") as out:
             csv_out = csv.writer(out)
             csv_out.writerow(data_fields)
     return 0
@@ -49,7 +50,7 @@ def process_attr(obj, field):
         Attribute of object corresponding to the respective field
     """
     out = obj
-    for attr in field.split('.'):
+    for attr in field.split("."):
         out = getattr(out, attr)
     return out
 
@@ -93,7 +94,7 @@ def next_element(elem: bs4.element.Tag) -> Union[bs4.element.Tag, None]:
     while elem is not None:
         # Find next element, skip NavigableString objects
         elem = elem.next_sibling
-        if hasattr(elem, 'name'):
+        if hasattr(elem, "name"):
             return elem
     return None
 
@@ -114,17 +115,18 @@ def get_paragraph(header: bs4.element.Tag) -> str:
         if s:
             page.append(s)
         elem = next_element(elem)
-    return re.sub(r"\s{2,}", '\n', '\n'.join(page))
+    return re.sub(r"\s{2,}", "\n", "\n".join(page))
 
 
 def stream_data(
-        stream: Generator[Any, None, None],
-        data_fields: List[str] = None,
-        file: Optional[str] = None,
-        table: Optional[dbu.DBTable] = None,
-        keywords: Optional[List[str]] = None,
-        keyword_fields: Optional[str] = None,
-        case_sensitive: bool = None,
+    stream: Generator[Any, None, None],
+    data_fields: List[str] = None,
+    file: Optional[str] = None,
+    table: Optional[dbu.DBTable] = None,
+    keywords: Optional[List[str]] = None,
+    keyword_fields: Optional[str] = None,
+    case_sensitive: bool = True,
+    timestamp: bool = False,
 ):
     """Creates a process that indefinitely streams data from a subreddit to a file
 
@@ -138,6 +140,7 @@ def stream_data(
         case_sensitive: If keywords are provided, flag for case sensitive matching. Default True, on.
         file: Path to file (csv) to write data to
         table: DBTable object that can be provided to insert data directly into SQL database
+        timestamp: If true, will add the timestamp the data was saved as an entry in the row. Default False
 
     Returns:
         None - Process runs until error is thrown or is interrupted
@@ -167,16 +170,18 @@ def stream_data(
 
     if file:
         open_file_stream(file, data_fields)
-    cols = ', '.join(data_fields)
+    cols = ", ".join(data_fields)
     for data in stream:
         if proc is not None:  # If filtering for keywords, run keyword check on keyword fields
-            keyword_data = ' '.join(str(data[idx]) for idx in idxs)
+            keyword_data = " ".join(str(data[idx]) for idx in idxs)
             if not proc(keyword_data):  # If no match, skip this iteration
                 continue
+        if timestamp:
+            data += (time.time(),)
         if table:
             table.insert(data, data_fields)
         if file:
-            with open(file, 'a', encoding='utf-8') as out:
-                logger.info('writing %s data to to file at: %s' % (cols, file))
+            with open(file, "a", encoding="utf-8") as out:
+                logger.info("writing %s data to to file at: %s" % (cols, file))
                 csv_out = csv.writer(out)
                 csv_out.writerow(data)

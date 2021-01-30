@@ -3,7 +3,7 @@ import re
 import string
 import time
 from collections import OrderedDict
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 import bs4
 import requests
@@ -38,9 +38,8 @@ def get_earnings_calls() -> List[str]:
     main_soup = BeautifulSoup(main_response.text, 'html.parser')
     if earnings_calls := main_soup.find_all('a', attrs={'data-id': 'article-list', 'href': True}):
         return [call['href'] for call in earnings_calls]
-    else:
-        logger.error("Error encountered when fetching recent earnings calls, links not found!")
-        return []
+    logger.error("Error encountered when fetching recent earnings calls, links not found!")
+    return []
 
 
 def get_links(a_lst: List[bs4.element.Tag]) -> List[str]:
@@ -130,10 +129,9 @@ def get_transcripts_data(transcript_links: List[str]) -> Dict[str, Dict[str, Any
         dictionary of data extracted from each transcript, keyed by the respective (sub)link
     """
     data = OrderedDict()
-    for link in (pbar := tqdm(transcript_links, total=len(transcript_links))):
+    for link in pbar := tqdm(transcript_links, total=len(transcript_links)):
         pbar.set_description(link)
         data[link] = get_transcript_data(link)
-        pbar.update(1)
     pbar.close()
     return data
 
@@ -154,26 +152,24 @@ def get_recent_articles() -> List[str]:
 
     if stories := soup.find('div', attrs={'class': 'top-stories'}):
         return [story['href'] for story in stories.find_all('a', attrs={'data-id': 'article-list'})]
-    else:
-        logger.error("Error encountered when fetching recent articles, article list not found!")
-        return []
+    logger.error("Error encountered when fetching recent articles, article list not found!")
+    return []
 
 
 def get_articles_data(article_links: List[str]) -> Dict[str, Dict[str, Any]]:
     """Extracts information from the provided motley fool articles
 
     Args:
-        article_links (List[str]): list of sublinks to articles
+        article_links (List[str]): List of sublinks to articles
 
     Returns:
         Dict[str, Dict[str, Any]]: Nested dictionary keyed on article link where the inner dictionary contains 
         information from that article
     """
     data = OrderedDict()
-    for link in (pbar := tqdm(article_links, total=len(article_links))):
+    for link in pbar := tqdm(article_links, total=len(article_links)):
         pbar.set_description(link)
         data[link] = get_article_data(link)
-        pbar.update(1)
     pbar.close()
     return data
 
@@ -182,7 +178,7 @@ def get_article_data(article_link: str, default: Optional[Any] = None) -> Dict[s
     """Extracts information from the given motley fools article
 
     Args:
-        article_link (str): sublink directing to specific article
+        article_link (str): Sublink directing to specific article
         default: If failed to extract a data field, what value to store in its place. Default, None
 
     Returns:
@@ -202,7 +198,7 @@ def get_article_data(article_link: str, default: Optional[Any] = None) -> Dict[s
     # Millionacres articles have a slightly different format
     if data['category'] == "millionacres":
         return _get_millionacres_data(article_soup, article_link, data)
-    
+
     if pub_date := article_soup.find('div', attrs={'class': 'publication-date'}):
         date_clean = pub_date.text.replace('Updated:', '').strip()
         try:
@@ -211,7 +207,7 @@ def get_article_data(article_link: str, default: Optional[Any] = None) -> Dict[s
             logger.warning(f"Failed to parse date: [{date_clean}] from article: {article_link}")
     else:
         logger.warning(f"Failed to find date for article: {article_link}")
-    
+
     if title := article_soup.find('div', attrs={'id': 'adv_text', 'class': 'adv-heading'}):
         try:
             title = title.next_sibling.next_sibling
@@ -232,7 +228,7 @@ def get_article_data(article_link: str, default: Optional[Any] = None) -> Dict[s
             logger.warning(f"Failed to find author name for article: {article_link}")
     else:
         logger.warning(f"Failed to find author div for article: {article_link}")
-    
+
     if article_content := article_soup.find('span', attrs={'class': 'article-content'}):
         article_text = re.sub(r"\n{2,}", r"\n", article_content.text.strip())
         data['content'] = article_text

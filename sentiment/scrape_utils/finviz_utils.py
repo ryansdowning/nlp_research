@@ -168,13 +168,12 @@ def _multiple_tickers_df(
         pandas dataframe of the combined results with an additional <TICKER_COL> column
     """
     func_dfs = []
-    for ticker in (pbar := tqdm(tickers, total=len(tickers))):
+    for ticker in pbar := tqdm(tickers, total=len(tickers)):
         soup = get_ticker_soup(ticker)
         pbar.set_description(ticker)
         func_df = df_func(soup, **kwargs)
         func_df[TICKER_COL] = ticker
         func_dfs.append(func_df)
-        pbar.update(1)
     return pd.concat(func_dfs, axis=0)
 
 
@@ -191,7 +190,8 @@ def multiple_tickers_news_df(tickers: List[str]) -> pd.DataFrame:
 
 
 def multiple_tickers_ratings_df(tickers: List[str]) -> pd.DataFrame:
-    """Returns the results of pulling analyst rating tables from each ticker concatenated and adds a ticker identifying column
+    """Returns the results of pulling analyst rating tables from each ticker concatenated and adds a ticker identifying
+    column
 
     Args:
         tickers (List[str]): list of tickers to get news data for
@@ -345,7 +345,7 @@ def stream_ticker_ratings(
         table: Optional[dbu.DBTable] = None,
         **kwargs
 ):
-    """Creates process that runs indefinitely while streaming ticker analyst ratings data from finviz to the provided 
+    """Creates process that runs indefinitely while streaming ticker analyst ratings data from finviz to the provided
     data sink(s)
 
     Args:

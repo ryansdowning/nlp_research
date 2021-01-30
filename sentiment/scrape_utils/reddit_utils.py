@@ -1,13 +1,18 @@
+import datetime
+import os
 from typing import Any, Iterable, Iterator, List, Optional, Tuple, Union
 
 import pandas as pd
 import praw
 from loguru import logger
+from psaw import PushshiftAPI
+from tqdm import tqdm
 
-from config.constants import (COMMENT_FIELDS, SUBMISSION_FIELDS,
-                              SUBMISSION_SORTS, reddit)
+from sentiment.config.constants import COMMENT_FIELDS, SUBMISSION_FIELDS, SUBMISSION_SORTS, reddit
 from sentiment.nlp_utils import db_utils as dbu
 from sentiment.scrape_utils import data_utils as du
+
+api = PushshiftAPI()
 
 
 def get_submissions(subreddit: praw.reddit.Subreddit, sort_method: str, **kwargs) -> Iterator[Any]:
@@ -24,34 +29,28 @@ def get_submissions(subreddit: praw.reddit.Subreddit, sort_method: str, **kwargs
     sort_method = sort_method.casefold()
     if sort_method not in SUBMISSION_SORTS:
         raise AttributeError(
-            f"Unexpected sort method: {sort_method}\nSupported sort methods "
-            f" for submissions: {SUBMISSION_SORTS}"
+            f"Unexpected sort method: {sort_method}\nSupported sort methods " f" for submissions: {SUBMISSION_SORTS}"
         )
 
-    logger.info(
-        'Attempting to get submissions from subreddit: %s, using sort method of: %s'
-        % (subreddit, sort_method)
-    )
-    if sort_method == 'hot':
+    logger.info("Attempting to get submissions from subreddit: %s, using sort method of: %s" % (subreddit, sort_method))
+    if sort_method == "hot":
         return subreddit.hot(**kwargs)
-    elif sort_method == 'new':
+    elif sort_method == "new":
         return subreddit.hot(**kwargs)
-    elif sort_method == 'rising':
+    elif sort_method == "rising":
         return subreddit.rising(**kwargs)
-    elif sort_method == 'controversial':
+    elif sort_method == "controversial":
         return subreddit.controversial(**kwargs)
-    elif sort_method == 'top':
+    elif sort_method == "top":
         return subreddit.top(**kwargs)
-    elif sort_method == 'gilded':
+    elif sort_method == "gilded":
         return subreddit.gilded(**kwargs)
 
-    raise NotImplementedError(
-        f"Getting submissions with sort method of: {sort_method} has not yet been implemented."
-    )
+    raise NotImplementedError(f"Getting submissions with sort method of: {sort_method} has not yet been implemented.")
 
 
 def filter_marked(
-        data: Iterable[praw.reddit.Submission], marked_labels: Iterable[str], field: str = 'id'
+    data: Iterable[praw.reddit.Submission], marked_labels: Iterable[str], field: str = "id"
 ) -> List[praw.reddit.Submission]:
     """Helper function to remove marked elements from list of elements using given field
 
@@ -71,9 +70,7 @@ def filter_marked(
     return [entity for entity in data if getattr(entity, field) not in marked_labels]
 
 
-def get_submissions_data(
-        submissions: Iterable[praw.reddit.Submission], data_fields: Iterable[str]
-) -> List[Tuple]:
+def get_submissions_data(submissions: Iterable[praw.reddit.Submission], data_fields: Iterable[str]) -> List[Tuple]:
     """Helper function to retrieve the data fields from a list of submissions
 
     Args:
@@ -85,17 +82,14 @@ def get_submissions_data(
     """
     if not set(data_fields).issubset(SUBMISSION_FIELDS):
         raise AttributeError(
-            f"Unexpected data fields for subreddit submissions:"
-            f" {set(data_fields) - set(SUBMISSION_FIELDS)}"
+            f"Unexpected data fields for subreddit submissions:" f" {set(data_fields) - set(SUBMISSION_FIELDS)}"
         )
 
     data = du.get_data_fields(submissions, data_fields)
     return data
 
 
-def get_comments_data(
-        comments: Iterable[praw.reddit.Comment], data_fields: Iterable[str]
-) -> List[Tuple]:
+def get_comments_data(comments: Iterable[praw.reddit.Comment], data_fields: Iterable[str]) -> List[Tuple]:
     """Helper function to retrieve the data fields from a list of comments
 
     Args:
@@ -107,8 +101,7 @@ def get_comments_data(
     """
     if not set(data_fields).issubset(COMMENT_FIELDS):
         raise AttributeError(
-            f"Unexpected data fields for subreddit comments:"
-            f" {set(data_fields) - set(COMMENT_FIELDS)}"
+            f"Unexpected data fields for subreddit comments:" f" {set(data_fields) - set(COMMENT_FIELDS)}"
         )
 
     data = du.get_data_fields(comments, data_fields)
@@ -116,11 +109,11 @@ def get_comments_data(
 
 
 def get_subreddit_submissions(
-        subreddit: str,
-        sort_method: Optional[str] = 'new',
-        data_fields: Optional[List[str]] = None,
-        file: Optional[str] = None,
-        **kwargs,
+    subreddit: str,
+    sort_method: Optional[str] = "new",
+    data_fields: Optional[List[str]] = None,
+    file: Optional[str] = None,
+    **kwargs,
 ) -> pd.DataFrame:
     """Scrapes subreddit submissions and stores the data in pandas dataframe, or csv file
 
@@ -137,16 +130,14 @@ def get_subreddit_submissions(
     """
     if sort_method not in SUBMISSION_SORTS:
         raise AttributeError(
-            f"Unexpected sort method: {sort_method}\nSupported sort methods "
-            f" for submissions: {SUBMISSION_SORTS}"
+            f"Unexpected sort method: {sort_method}\nSupported sort methods " f" for submissions: {SUBMISSION_SORTS}"
         )
 
     if data_fields is None:
         data_fields = list(SUBMISSION_FIELDS)
     elif not set(data_fields).issubset(SUBMISSION_FIELDS):
         raise AttributeError(
-            f"Unexpected data fields for subreddit submissions:"
-            f" {set(data_fields) - set(SUBMISSION_FIELDS)}"
+            f"Unexpected data fields for subreddit submissions:" f" {set(data_fields) - set(SUBMISSION_FIELDS)}"
         )
 
     sub = reddit.subreddit(subreddit)
@@ -160,7 +151,7 @@ def get_subreddit_submissions(
 
 
 def get_submission_comments(
-        submissions: Iterable[praw.reddit.Submission], limit: Optional[int] = None
+    submissions: Iterable[praw.reddit.Submission], limit: Optional[int] = None
 ) -> List[praw.reddit.Comment]:
     """Iterates through reddit submissions and extracts the comments into a 1d list of reddit comments
 
@@ -173,20 +164,18 @@ def get_submission_comments(
     """
     comments = []
     for submission in submissions:
-        logger.info(
-            'Using replace more to get additional comments for submission: %s' % submission.id
-        )
+        logger.info("Using replace more to get additional comments for submission: %s" % submission.id)
         submission.comments.replace_more(limit=limit)
         comments.extend(submission.comments.list())
     return comments
 
 
 def get_subreddit_submission_comments(
-        subreddit: str,
-        sort_method: str = 'new',
-        data_fields: Optional[List[str]] = None,
-        file: Optional[str] = None,
-        **kwargs,
+    subreddit: str,
+    sort_method: str = "new",
+    data_fields: Optional[List[str]] = None,
+    file: Optional[str] = None,
+    **kwargs,
 ):
     """Scrapes all of the comments from the submissions of a given subreddit, respective to the sorting method/kwargs
 
@@ -205,8 +194,7 @@ def get_subreddit_submission_comments(
         data_fields = list(COMMENT_FIELDS)
     elif not set(data_fields).issubset(COMMENT_FIELDS):
         raise AttributeError(
-            f"Unexpected data fields for subreddit comments:"
-            f" {set(data_fields) - set(COMMENT_FIELDS)}"
+            f"Unexpected data fields for subreddit comments:" f" {set(data_fields) - set(COMMENT_FIELDS)}"
         )
 
     sub = reddit.subreddit(subreddit)
@@ -221,10 +209,10 @@ def get_subreddit_submission_comments(
 
 
 def subreddit_data_stream(
-        subreddit: str,
-        sub_or_comm: str,
-        data_fields: List[str] = None,
-        **kwargs,
+    subreddit: str,
+    sub_or_comm: str,
+    data_fields: List[str] = None,
+    **kwargs,
 ):
     """Creates a generator expression that yields a stream of data from a subreddit given the input parameters
 
@@ -237,25 +225,21 @@ def subreddit_data_stream(
     Returns:
         Tuples of len(data_fields) are yielded respective to the ordered data fields
     """
-    if sub_or_comm not in ('submissions', 'comments'):
+    if sub_or_comm not in ("submissions", "comments"):
         raise AttributeError("Must specify either submissions or comments for data stream")
     sub = reddit.subreddit(subreddit)
-    data_stream = (
-        sub.stream.submissions(**kwargs)
-        if sub_or_comm == 'submissions'
-        else sub.stream.comments(**kwargs)
-    )
+    data_stream = sub.stream.submissions(**kwargs) if sub_or_comm == "submissions" else sub.stream.comments(**kwargs)
 
     for data in data_stream:
         yield du.get_attributes_list(data, data_fields)
 
 
 def stream_subreddit_submissions(
-        subreddit: str,
-        data_fields: Optional[List[str]] = None,
-        file: Optional[str] = None,
-        table: Optional[dbu.DBTable] = None,
-        **kwargs
+    subreddit: str,
+    data_fields: Optional[List[str]] = None,
+    file: Optional[str] = None,
+    table: Optional[dbu.DBTable] = None,
+    **kwargs,
 ):
     """Creates a process that indefinitely streams submissions data from a subreddit to a file
 
@@ -274,20 +258,19 @@ def stream_subreddit_submissions(
         data_fields = list(SUBMISSION_FIELDS)
     elif not set(data_fields).issubset(SUBMISSION_FIELDS):
         raise AttributeError(
-            f"Unexpected data fields for subreddit submissions:"
-            f" {set(data_fields) - set(SUBMISSION_FIELDS)}"
+            f"Unexpected data fields for subreddit submissions:" f" {set(data_fields) - set(SUBMISSION_FIELDS)}"
         )
 
-    stream = subreddit_data_stream(subreddit, 'submissions', data_fields)
+    stream = subreddit_data_stream(subreddit, "submissions", data_fields)
     du.stream_data(stream=stream, data_fields=data_fields, file=file, table=table, **kwargs)
 
 
 def stream_subreddit_comments(
-        subreddit: str,
-        data_fields: Optional[List[str]] = None,
-        file: Optional[str] = None,
-        table: Optional[dbu.DBTable] = None,
-        **kwargs
+    subreddit: str,
+    data_fields: Optional[List[str]] = None,
+    file: Optional[str] = None,
+    table: Optional[dbu.DBTable] = None,
+    **kwargs,
 ):
     """Creates a process that indefinitely streams comments data from a subreddit to a file
 
@@ -306,19 +289,18 @@ def stream_subreddit_comments(
         data_fields = list(COMMENT_FIELDS)
     elif not set(data_fields).issubset(COMMENT_FIELDS):
         raise AttributeError(
-            f"Unexpected data fields for subreddit comments:"
-            f" {set(data_fields) - set(COMMENT_FIELDS)}"
+            f"Unexpected data fields for subreddit comments:" f" {set(data_fields) - set(COMMENT_FIELDS)}"
         )
 
-    stream = subreddit_data_stream(subreddit, 'comments', data_fields)
+    stream = subreddit_data_stream(subreddit, "comments", data_fields)
     du.stream_data(stream, data_fields, file, table, **kwargs)
 
 
 def _update_data(
-        sub_or_comm: str,
-        df_or_file: Union[pd.DataFrame, str],
-        id_col: str = 'id',
-        file: Optional[str] = None,
+    sub_or_comm: str,
+    df_or_file: Union[pd.DataFrame, str],
+    id_col: str = "id",
+    file: Optional[str] = None,
 ) -> pd.DataFrame:
     """Updates reddit submissions and comments data based on their associated ids. Pulls updated data and replaces it
     in the given dataset
@@ -334,7 +316,7 @@ def _update_data(
         Pandas df with the same columns and shape as the original dataset, but with updated values
         If file is not None, will output this data to a csv (file must be .csv)
     """
-    if sub_or_comm not in ('submissions', 'comments'):
+    if sub_or_comm not in ("submissions", "comments"):
         raise AttributeError("Must specify either submissions or comments for streaming data")
 
     if isinstance(df_or_file, pd.DataFrame):
@@ -348,7 +330,7 @@ def _update_data(
         )
     del df_or_file
 
-    fields = SUBMISSION_FIELDS if sub_or_comm == 'submissions' else COMMENT_FIELDS
+    fields = SUBMISSION_FIELDS if sub_or_comm == "submissions" else COMMENT_FIELDS
     if not set(data.columns).issubset(fields):
         raise AttributeError(
             f"Unexpected column(s) in dataset: {set(data.columns) - fields} for {sub_or_comm} data."
@@ -357,7 +339,7 @@ def _update_data(
     if id_col not in data.columns:
         raise AttributeError(f"id column: {id_col} does not exist in the given dataset.")
 
-    if sub_or_comm == 'submissions':
+    if sub_or_comm == "submissions":
 
         def get_updated(id_):
             return du.get_attributes_list(reddit.submission(id_), data.columns)
@@ -374,7 +356,7 @@ def _update_data(
 
 
 def update_submissions(
-        df_or_file: Union[pd.DataFrame, str], id_col: str = 'id', file: Optional[str] = None
+    df_or_file: Union[pd.DataFrame, str], id_col: str = "id", file: Optional[str] = None
 ) -> pd.DataFrame:
     """Updates reddit submissions data based on their associated ids. Pulls updated data and replaces it
     in the given dataset
@@ -389,11 +371,11 @@ def update_submissions(
         Pandas df with the same columns and shape as the original dataset, but with updated values
         If file is not None, will output this data to a csv (file must be .csv)
     """
-    return _update_data('submissions', df_or_file, id_col, file)
+    return _update_data("submissions", df_or_file, id_col, file)
 
 
 def update_comments(
-        df_or_file: Union[pd.DataFrame, str], id_col: str = 'id', file: Optional[str] = None
+    df_or_file: Union[pd.DataFrame, str], id_col: str = "id", file: Optional[str] = None
 ) -> pd.DataFrame:
     """Updates reddit comments data based on their associated ids. Pulls updated data and replaces it
         in the given dataset
@@ -408,4 +390,130 @@ def update_comments(
         Pandas df with the same columns and shape as the original dataset, but with updated values
         If file is not None, will output this data to a csv (file must be .csv)
     """
-    return _update_data('comments', df_or_file, id_col, file)
+    return _update_data("comments", df_or_file, id_col, file)
+
+
+def _process_pushshift_chunk(chunk: pd.DataFrame, fields: Optional[List[str]]):
+    for date_col in {"created_utc", "retrieved_on", "created"}:
+        if date_col in chunk.columns:
+            chunk[date_col] = pd.to_datetime(chunk[date_col], unit="s")
+    return chunk[fields] if fields else chunk
+
+
+def _get_pushshift(
+    sub_or_comm: str,
+    subreddit: str,
+    start: Optional[datetime.datetime] = None,
+    end: Optional[datetime.datetime] = None,
+    data_fields: Optional[List[str]] = None,
+    file: Optional[str] = None,
+    checkpoint_freq: Optional[int] = None,
+    **kwargs,
+) -> pd.DataFrame:
+    """Function to query pushshift api using PSAW framework, implements helper functionality such as date ranges and
+    checkpointing to files
+
+    Args:
+        sub_or_comm: Abstract to avoid duplicate code, submissions or comments is provided to specify exact stream type
+        subreddit: Subreddit to stream from
+        start: Start date(time) for data stream
+        end: End date(time) for data stream
+        data_fields: Columns to include in the stream
+        file: File to save output to, must be provided if checkpoint_freq is specified
+        checkpoint_freq: How often (integer of rows) to save/checkpoint to a file, if a file already exists at the
+                         location, it will attempt to append to existing data.
+        **kwargs: Additional keyword arguments provided to the PSAW search_comments or search_submissions function.
+                  Please see their documentation for more details.
+
+    Returns:
+
+    """
+    if sub_or_comm == "submissions":
+        api_func = api.search_submissions
+    elif sub_or_comm == "comments":
+        api_func = api.search_comments
+    else:
+        raise AttributeError("Must specify either submissions or comments for pushshift data")
+
+    if checkpoint_freq is not None and file is None:
+        raise AttributeError("Checkpoint frequency provided without specifying a file path to save to!")
+
+    if data_fields is not None:
+        data = api_func(subreddit=subreddit, after=start, before=end, filter=data_fields, **kwargs)
+    else:
+        data = api_func(subreddit=subreddit, after=start, before=end, **kwargs)
+
+    if checkpoint_freq is not None:
+        items = []
+        for i, item in tqdm(enumerate(data, 1)):
+            items.append(item.d_)
+            if i % checkpoint_freq == 0:
+                data_df = _process_pushshift_chunk(pd.DataFrame(items), data_fields)
+                data_df.to_csv(file, index=False, mode="a", header=not os.path.exists(file))
+                items = []
+        data_df = _process_pushshift_chunk(pd.DataFrame(items), data_fields)
+        data_df.to_csv(file, index=False, mode="a", header=not os.path.exists(file))
+        return data_df
+    else:
+        data_df = _process_pushshift_chunk(pd.DataFrame([item.d_ for item in tqdm(data)]), data_fields)
+        if file is not None:
+            data_df.to_csv(file, index=False)
+        return data_df
+
+
+def get_pushshift_submissions(
+    subreddit: str,
+    start: Optional[datetime.datetime] = None,
+    end: Optional[datetime.datetime] = None,
+    data_fields: Optional[List[str]] = None,
+    file: Optional[str] = None,
+    checkpoint_freq: Optional[int] = None,
+    **kwargs,
+) -> pd.DataFrame:
+    """Function to stream subreddit submissions from pushshift API through PSAW worker
+
+    Args:
+        subreddit:
+        subreddit: Subreddit to stream from
+        start: Start date(time) for data stream
+        end: End date(time) for data stream
+        data_fields: Columns to include in the stream
+        file: File to save output to, must be provided if checkpoint_freq is specified
+        checkpoint_freq: How often (integer of rows) to save/checkpoint to a file, if a file already exists at the
+                         location, it will attempt to append to existing data.
+        **kwargs: Additional keyword arguments provided to the PSAW search_comments or search_submissions function.
+                  Please see their documentation for more details.
+
+    Returns:
+        Dataframe of subreddit submissions for the provided query, also saves to file (csv) if provided
+    """
+    return _get_pushshift("submissions", subreddit, start, end, data_fields, file, checkpoint_freq, **kwargs)
+
+
+def get_pushshift_comments(
+    subreddit: str,
+    start: Optional[datetime.datetime] = None,
+    end: Optional[datetime.datetime] = None,
+    data_fields: Optional[List[str]] = None,
+    file: Optional[str] = None,
+    checkpoint_freq: Optional[int] = None,
+    **kwargs,
+) -> pd.DataFrame:
+    """Function to stream subreddit comments from pushshift API through PSAW worker
+
+    Args:
+        subreddit:
+        subreddit: Subreddit to stream from
+        start: Start date(time) for data stream
+        end: End date(time) for data stream
+        data_fields: Columns to include in the stream
+        file: File to save output to, must be provided if checkpoint_freq is specified
+        checkpoint_freq: How often (integer of rows) to save/checkpoint to a file, if a file already exists at the
+                         location, it will attempt to append to existing data.
+        **kwargs: Additional keyword arguments provided to the PSAW search_comments or search_submissions function.
+                  Please see their documentation for more details.
+
+    Returns:
+        Dataframe of subreddit comments for the provided query, also saves to file (csv) if provided
+    """
+    return _get_pushshift("comments", subreddit, start, end, data_fields, file, checkpoint_freq, **kwargs)
