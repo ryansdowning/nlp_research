@@ -8,13 +8,14 @@ from flashtext import KeywordProcessor  # pylint: disable=E0401
 from tqdm import tqdm
 from transformers import PretrainedConfig  # pylint: disable=E0401
 from transformers import PreTrainedTokenizer, pipeline
+from collections import defaultdict
 
 tqdm.pandas()
 torch.backends.cudnn.enabled = True
 
 TASK_SETTINGS = {
     "feature-extraction": {"suffix": "_extracted"},
-    "sentiment-analysis": {"suffix": "_sentiment"},
+    "finlang-analysis": {"suffix": "_sentiment"},
     "ner": {"suffix": "_nertag"},
     "question-answering": {"suffix": "_qa"},
     "fill-mask": {"suffix": "_fill"},
@@ -60,7 +61,7 @@ def tagging_pipeline(
         task (`str`):
             The task defining which pipeline will be returned. Currently accepted tasks are:
             - "feature-extraction": will return child of `~transformers.FeatureExtractionPipeline`
-            - "sentiment-analysis": will return child of `~transformers.TextClassificationPipeline`
+            - "finlang-analysis": will return child of `~transformers.TextClassificationPipeline`
             - "ner": will return child of `~transformers.TokenClassificationPipeline`
             - "question-answering": will return child of `~transformers.QuestionAnsweringPipeline`
             - "fill-mask": will return child of `~transformers.FillMaskPipeline`
@@ -177,7 +178,7 @@ def tagging_pipeline(
         "device": device,
         "task": task,
     }
-    if task not in ("feature-extraction", "fill-mask"):
+    if hasattr(task_class, 'binary_output'):
         params["binary_output"] = task_class.binary_output
     # Return TaggingPipeline with the processed arguments from the task class
     return TaggingPipeline(**params)
@@ -302,7 +303,7 @@ def _multi_hot_encode(labels):
              Series with same length as [unique], each position containing a 1 if value was found
              in [label] and 0 otherwise
         """
-        return unique_labels.isin(label).astype(int)
+        return unique_labels.isin(label).astype(np.int8)
 
     encoded = pd.Series(labels).apply(_get_encoding)
     encoded.columns = unique_labels
@@ -328,7 +329,7 @@ def get_keywords_sentiment(
         model_name_or_path: name of transformers model to use or path to a model on local machine
 
     Returns:
-        Series containing the sentiment scores for the corresponding keywords in same order as keywords input
+        Series containing the finlang scores for the corresponding keywords in same order as keywords input
     """
     if (summarize := summarize.casefold()) not in SENTIMENT_SUMMARY:
         raise AttributeError(f"Summarize currently supports: {SENTIMENT_SUMMARY}, got: {summarize}")
@@ -338,23 +339,23 @@ def get_keywords_sentiment(
         raise ValueError("No keywords found in source text")
     data = data[data[f"{source}{TASK_SETTINGS['keywords']['suffix']}"].astype(bool)]
 
-    # Get sentiment with (-1, 1) labels
-    sentiment_tagger = tagging_pipeline("sentiment-analysis", model_name_or_path)
+    # Get finlang with (-1, 1) labels
+    sentiment_tagger = tagging_pipeline("finlang-analysis", model_name_or_path)
     data = sentiment_tagger(data, source)
 
     def _label_to_score(label):
-        """Helper function to transform sentiment output to [-1, 1] values respective to [NEGATIVE, POSITIVE]"""
+        """Helper function to transform finlang output to [-1, 1] values respective to [NEGATIVE, POSITIVE]"""
         try:
             return 1 if label[0]["label"] == "POSITIVE" else -1
         except TypeError:
             return 0
 
     # Convert label to int
-    data.loc[:, "sentiment_score"] = data[f"{source}{TASK_SETTINGS['sentiment-analysis']['suffix']}"].apply(
+    data.loc[:, "sentiment_score"] = data[f"{source}{TASK_SETTINGS['finlang-analysis']['suffix']}"].apply(
         _label_to_score
     )
 
-    # Encode keyword vectors and multiply them against the sentiment score to get keyword scores
+    # Encode keyword vectors and multiply them against the finlang score to get keyword scores
     encoded = _multi_hot_encode(data[f"{source}{TASK_SETTINGS['keywords']['suffix']}"].values)
     keyword_scores = encoded.T * data["sentiment_score"].values
 
@@ -370,7 +371,7 @@ def get_keywords_sentiment(
         keyword_scores = keyword_scores.apply(_sentiment_tuple, axis=1)
         default = (0, 0)
 
-    # Fill keywords without any matches to a sentiment of 0
+    # Fill keywords without any matches to a finlang of 0
     missing = list(set(keywords) - set(keyword_scores.index))
     missing_scores = pd.Series([default] * len(missing), index=missing)
     keyword_scores = pd.concat((keyword_scores, missing_scores))
@@ -426,3 +427,37 @@ def keyword_bool_proc(keywords, case_sensitive):
         return bool(proc.extract_keywords(text))
 
     return bool_proc
+
+
+def expanded_list_linking_index(data: Union[pd.Series, pd.DataFrame], keyword_col: Optional[str] = None):
+    """Function to help create a mapping for keywords to given data indexes from a pandas DataFrame. This helps save a
+    lot of memory when working with large datasets or a large number of keywords. Instead of expanding the rows or
+    creating a multi-hot encode, we instead just create a map that can be used as a separate data structure to support
+    the relationship between the data and the keywords.
+
+    Args:
+        data: pandas DataFrame with keyword_col column where the keywords are a list of keywords corresponding to
+              the data index
+        keyword_col: Name of keyword_col, each entry in the column must be type Iterable[str]
+
+    Returns:
+        Dictionary that maps keywords from keyword_col to the respective index of data
+    """
+    if isinstance(data, pd.Series):
+        data = pd.DataFrame(data, columns=['data'])
+        keyword_col = 'data'
+    elif isinstance(data, pd.DataFrame):
+        if keyword_col is None or keyword_col not in data.columns:
+            raise AttributeError(
+                f"Data is of type pandas.DataFrame but the keyword_col parameter was not supplied, or the given column"
+                f" is not in <data>, must be one of: {data.columns}"
+            )
+    else:
+        raise AttributeError(f"Data must be of type pandas.Series or pandas.DataFrame, got: {type(data)}")
+
+    # Create dictionary that maps keywords to corresponding indexes in data
+    keywords_linking = defaultdict(set)
+    for idx, keywords in tqdm(data[[keyword_col]].iterrows(), total=data.shape[0]):
+        for keyword in keywords[keyword_col]:
+            keywords_linking[keyword].add(idx)
+    return keywords_linking

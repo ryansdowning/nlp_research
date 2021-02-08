@@ -11,8 +11,8 @@ from bs4 import BeautifulSoup
 from loguru import logger
 from tqdm import tqdm
 
-from sentiment.nlp_utils import db_utils as dbu
-from sentiment.scrape_utils import data_utils as du
+from finlang.nlp_utils import db_utils as dbu
+from finlang.scrape_utils import data_utils as du
 
 BASE = 'https://www.fool.com'
 EARNINGS = '/earnings-call-transcripts'

@@ -3,9 +3,9 @@ import argparse
 import prawcore
 from loguru import logger
 
-from sentiment.config.db_config import conn
-from sentiment.nlp_utils import db_utils as dbu
-from sentiment.scrape_utils import reddit_utils as ru
+from finlang.config.db_config import conn
+from finlang.nlp_utils import db_utils as dbu
+from finlang.scrape_utils import reddit_utils as ru
 
 parser = argparse.ArgumentParser()
 
@@ -33,7 +33,7 @@ args = parser.parse_args()
 if args.log:
     logger.remove()
     logger.add(
-        sink=f"comments_{args.subreddit}.log",
+        sink=f"submissions_{args.subreddit}.log",
         level="INFO",
         format="<b><c><{time}</c></b> [{name}] <level>{level.name}</level> > {message}",
     )
@@ -45,11 +45,13 @@ else:
 
 while True:
     try:
-        ru.stream_subreddit_comments(subreddit=args.subreddit, data_fields=args.fields, file=args.file, table=db_table)
+        ru.stream_subreddit_submissions(
+            subreddit=args.subreddit, data_fields=args.fields, file=args.file, table=db_table
+        )
     except prawcore.exceptions.ServerError:
         logger.debug(
             "prawcore.exceptions.ServerError encountered, this could be caused by a server"
-            " overload. Restarting comments stream"
+            " overload. Restarting submissions stream"
         )
     except:
         logger.exception("Something horrible has happened!")

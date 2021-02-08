@@ -8,9 +8,9 @@ from loguru import logger
 from psaw import PushshiftAPI
 from tqdm import tqdm
 
-from sentiment.config.constants import COMMENT_FIELDS, SUBMISSION_FIELDS, SUBMISSION_SORTS, reddit
-from sentiment.nlp_utils import db_utils as dbu
-from sentiment.scrape_utils import data_utils as du
+from finlang.config.constants import COMMENT_FIELDS, SUBMISSION_FIELDS, SUBMISSION_SORTS, reddit
+from finlang.nlp_utils import db_utils as dbu
+from finlang.scrape_utils import data_utils as du
 
 api = PushshiftAPI()
 

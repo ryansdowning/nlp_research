@@ -9,9 +9,9 @@ from bs4 import BeautifulSoup
 from loguru import logger
 from tqdm import tqdm
 
-from sentiment.config.constants import HEADERS
-from sentiment.scrape_utils import data_utils as du
-from sentiment.scrape_utils import motley_utils as mu
+from finlang.config.constants import HEADERS
+from finlang.scrape_utils import data_utils as du
+from finlang.scrape_utils import motley_utils as mu
 
 YAHOO_FIELDS = ("content", "author", "date", "length")
 MOTLEY_FIELDS = mu.ARTICLE_FIELDS

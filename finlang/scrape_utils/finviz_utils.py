@@ -9,9 +9,9 @@ import requests
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 
-from sentiment.config.constants import HEADERS
-from sentiment.nlp_utils import db_utils as dbu
-from sentiment.scrape_utils import data_utils as du
+from finlang.config.constants import HEADERS
+from finlang.nlp_utils import db_utils as dbu
+from finlang.scrape_utils import data_utils as du
 
 BASE_URL = "https://finviz.com/quote.ashx?t="
 TICKER_COL = 'ticker'
