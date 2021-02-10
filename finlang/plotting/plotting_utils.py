@@ -1,33 +1,39 @@
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
 import datetime
 from functools import reduce
-from typing import Optional, Dict, Set, Union, List
+from typing import Dict, List, Optional, Set, Union
 
-SOURCE_LABEL = '_SOURCE_LABEL'
-KEYWORD_LABEL = '_KEYWORD_LABEL'
-SUMMARY_LABEL = '_SUMMARY'
-DATE_LABEL = '_DATE'
-SUMMARY_TYPES = ('mentions', 'count', 'sum')
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import plotly.express as px
+import seaborn as sns
+
+SOURCE_LABEL = "Source"
+KEYWORD_LABEL = "Keyword"
+SUMMARY_LABEL = "Summary"
+DATE_LABEL = "Date"
+SUMMARY_TYPES = ("mentions", "count", "sum")
+POS_LABEL, NEG_LABEL = 'positive', 'negative'
+COUNT_COLORS = {POS_LABEL: "green", NEG_LABEL: "red"}
+PLOT_BACKENDS = ("plotly", "matplotlib")
 
 
 def plot_keywords(
-        data: pd.DataFrame,
-        keywords_linking: Dict[str, Set],
-        date_col: str,
-        source_col: str,
-        label_col: Optional[str] = None,
-        start_date: Optional[datetime.datetime] = None,
-        end_date: Optional[datetime.datetime] = None,
-        sources: Optional[Union[str, List[str]]] = None,
-        keywords: Optional[Union[str, List[str]]] = None,
-        frequency: Optional[str] = 'd',
-        summary: Optional[str] = 'mentions',
-        facet_keywords: Optional[bool] = False,
-        facet_sources: Optional[bool] = False,
-        overlap: Optional[bool] = False,
+    data: pd.DataFrame,
+    keywords_linking: Dict[str, Set],
+    date_col: str,
+    source_col: str,
+    label_col: Optional[str] = None,
+    start_date: Optional[datetime.datetime] = None,
+    end_date: Optional[datetime.datetime] = None,
+    sources: Optional[Union[str, List[str]]] = None,
+    keywords: Optional[Union[str, List[str]]] = None,
+    frequency: Optional[str] = "m",
+    summary: Optional[str] = "mentions",
+    facet_keywords: Optional[bool] = False,
+    facet_sources: Optional[bool] = False,
+    overlap: Optional[bool] = False,
+    backend: Optional[str] = "plotly",
 ):
     """Dynamic plotting function that works with upstream text data that has been tagged in some (numerical) way
 
@@ -59,7 +65,7 @@ def plot_keywords(
         keywords: Keywords to include in the plotted data. Default None, if provided the data will be filtered to only
                   include data where the keywords_linking contains the index of one of the provided keywords. Can be
                   single str, or list of strings.
-        frequency: How often to compute summary statistic (must be compatible with pandas groupby) default 'd', daily.
+        frequency: How often to compute summary statistic (must be compatible with pandas groupby) default 'm', monthly.
         summary: Summary method, currently supports:
                  mentions - Size of each data group
                  sum - Sum of label_col for each data group
@@ -71,17 +77,17 @@ def plot_keywords(
         overlap: If the data itself is facetted among the keywords of sources, this flag allows the lines to all be
                  drawn on a single plot rather than using seaborn FacetGrid to draw one line on each subplot
                  Default False, facets plots according to facet options
+        backend: Change the plotting backend used, by default the plotly package will be used. Specifying "matplotlib"
+                 will instead use matplotlib backend for plotting
 
     Returns:
-        fig and ax (or axes) with the data plotted corresponding to the given options
+        fig with the data plotted corresponding to the given options and the selected plotting backend package
     """
     # Valid Input Checking
     summary = summary.casefold()
     if (summary := summary.casefold()) not in SUMMARY_TYPES:
-        raise AttributeError(
-            f"Got unexpected value for summary: {summary}, expected str one of: {SUMMARY_TYPES}"
-        )
-    if summary in ('sum', 'count') and label_col is None:
+        raise AttributeError(f"Got unexpected value for summary: {summary}, expected str one of: {SUMMARY_TYPES}")
+    if summary in ("sum", "count") and label_col is None:
         raise AttributeError(f"Must provide name label_col for summary type: {summary}")
     if facet_keywords and keywords is None:
         raise AttributeError(
@@ -89,6 +95,8 @@ def plot_keywords(
         )
     if facet_sources and sources is None:
         raise AttributeError("If facet_sources is set to True, you must provide an Iterable of <source>s to facet on")
+    if (backend := backend.casefold()) not in PLOT_BACKENDS:
+        raise AttributeError(f"Backend not recognized, expected one of: {PLOT_BACKENDS}, but got: {backend}")
 
     # Filter data
     if start_date is None:
@@ -116,42 +124,54 @@ def plot_keywords(
     plot_data = data[data_filter]
     plot_idxs = set(plot_data.index)  # Get new subset of indexes for keyword linking
 
-    def _compute_summary_data(keyword=None, source=None):
-        # Filter data based on keyword and source provided (or not provided)
-        if keyword is not None and source is not None:
-            idxs = keywords_linking[keyword].intersection(plot_idxs)
-            ungrouped = plot_data.loc[idxs]
-            ungrouped = ungrouped[ungrouped[source_col] == source]
-        elif keyword is not None:
-            idxs = keywords_linking[keyword].intersection(plot_idxs)
-            ungrouped = plot_data.loc[idxs]
-        elif source is not None:
-            ungrouped = plot_data[plot_data[source_col] == source]
-        else:
-            ungrouped = plot_data
-        grouped_data = ungrouped.groupby(pd.Grouper(key=date_col, freq=frequency))  # Group by date_col with frequency
+    def _mentions(_data):
+        mentions_data = _data.size()
+        return pd.DataFrame({DATE_LABEL: mentions_data.index, summary: mentions_data.tolist()})
 
-        # Create DataFrame with summary data stored in preset columns, count is different because it has 2 summary cols
-        if summary == 'mentions':
-            mentions_data = grouped_data.size()
-            summary_data = pd.DataFrame({DATE_LABEL: mentions_data.index, SUMMARY_LABEL: mentions_data.tolist()})
-        elif summary == 'sum':
-            sum_data = grouped_data[label_col].sum()
-            summary_data = pd.DataFrame({DATE_LABEL: sum_data.index, SUMMARY_LABEL: sum_data.tolist()})
-        elif summary == 'count':
-            count_data = grouped_data[label_col].apply(lambda x: ((x > 0).sum(), (x < 0).sum()))
-            summary_data = pd.DataFrame(count_data.tolist(), columns=('positive', 'negative'), index=count_data.index)
-            summary_data[DATE_LABEL] = summary_data.index
-            summary_data.reset_index(inplace=True)
-        else:
-            raise AttributeError(f"Invalid summary value encountered, {summary}")
+    def _sum(_data):
+        sum_data = _data[label_col].sum()
+        return pd.DataFrame({DATE_LABEL: sum_data.index, summary: sum_data.tolist()})
 
-        # Add column for keyword and source if provided for faceting
-        if facet_keywords and keyword is not None:
-            summary_data[KEYWORD_LABEL] = keyword
-        if facet_sources and source is not None:
-            summary_data[SOURCE_LABEL] = source
+    def _count(_data):
+        count_data = _data[label_col].apply(lambda x: ((x > 0).sum(), (x < 0).sum()))
+        summary_data = pd.DataFrame(
+            count_data.tolist(),
+            columns=(POS_LABEL, NEG_LABEL),
+            index=count_data.index,
+        )
+        summary_data[DATE_LABEL] = summary_data.index
+        summary_data.reset_index(inplace=True)
         return summary_data
+
+    summary_func = eval(f"_{summary}")
+    grouper = pd.Grouper(key=date_col, freq=frequency)
+    facet_data = []
+    if facet_keywords and facet_sources:
+        for keyword in keywords:
+            idxs = keywords_linking[keyword].intersection(plot_idxs)
+            for source in sources:
+                data_group = plot_data.loc[idxs]
+                data_group = data_group[data_group[source_col] == source].groupby(grouper)
+                summary_data = summary_func(data_group)
+                summary_data[KEYWORD_LABEL] = keyword
+                summary_data[SOURCE_LABEL] = source
+                facet_data.append(summary_data)
+    elif facet_keywords:
+        for keyword in keywords:
+            idxs = keywords_linking[keyword].intersection(plot_idxs)
+            data_group = plot_data.loc[idxs].groupby(grouper)
+            summary_data = summary_func(data_group)
+            summary_data[KEYWORD_LABEL] = keyword
+            facet_data.append(summary_data)
+    elif facet_sources:
+        for source in sources:
+            data_group = plot_data[plot_data[source_col] == source].groupby(grouper)
+            summary_data = summary_func(data_group)
+            summary_data[SOURCE_LABEL] = source
+            facet_data.append(summary_data)
+    else:
+        facet_data.append(summary_func(plot_data.groupby(grouper)))
+    facet_data = pd.concat(facet_data)
 
     def _plot_facet_grid(g):
         """Helper function to reduce duplicate code throughout. Plots the summarized data on the various facet grids
@@ -162,19 +182,20 @@ def plot_keywords(
         Returns:
             fig and axes of the facet grid with the data plotted appropriately
         """
-        if summary == 'count':  # Plot positive and negative lines
-            g.map_dataframe(sns.lineplot, x=DATE_LABEL, y='positive', label='posititve', color='green', alpha=.5,
-                            legend='auto')
-            g.map_dataframe(sns.lineplot, x=DATE_LABEL, y='negative', label='negative', color='red', alpha=.5)
+        if summary == "count":  # Plot positive and negative lines
+            g.map_dataframe(
+                sns.lineplot,  x=DATE_LABEL, y=POS_LABEL, label=POS_LABEL, color="green", alpha=0.5, legend="auto",
+            )
+            g.map_dataframe(sns.lineplot, x=DATE_LABEL, y="negative", label="negative", color="red", alpha=0.5,)
             for ax in g.axes.flat:  # Add legend for positive and negative
-                ax.legend(labels=['Positive', 'Negative'], loc='upper left')
+                ax.legend(labels=[POS_LABEL, NEG_LABEL], loc="upper left")
         else:  # Plot other summary line
-            g.map_dataframe(sns.lineplot, x=DATE_LABEL, y=SUMMARY_LABEL)
-        g.set_axis_labels('Date', summary.title())
+            g.map_dataframe(sns.lineplot, x=DATE_LABEL, y=summary)
+        g.set_axis_labels("Date", summary.title())
         g.set_titles(col_template="{col_name}", row_template="{row_name}")
         return g.fig, g.axes
 
-    def _plot_overlap(data, hue_label):
+    def _plot_overlap_matplotlib(data, hue_label):
         """Helper function to reduce duplicate code by plotting the summarized data lines as overlapped
 
         Args:
@@ -185,59 +206,152 @@ def plot_keywords(
             fig and ax from the plt subplot with the data plotted appropriately
         """
         fig, ax = plt.subplots(1)
-        if summary == 'count':  # Positive and negative lines for each hue
-            sns.lineplot(data=data, x=DATE_LABEL, y='positive', hue=hue_label, palette='Greens', ax=ax)
-            sns.lineplot(data=data, x=DATE_LABEL, y='negative', hue=hue_label, palette='Reds', ax=ax)
+        if summary == "count":  # Positive and negative lines for each hue
+            sns.lineplot(data=data, x=DATE_LABEL, y=POS_LABEL, hue=hue_label, palette="Greens", ax=ax)
+            sns.lineplot(data=data,  x=DATE_LABEL, y=NEG_LABEL, hue=hue_label, palette="Reds", ax=ax)
         else:
-            ax = sns.lineplot(data=data, x=DATE_LABEL, y=SUMMARY_LABEL, hue=hue_label)
-        ax.set(xlabel='Date', ylabel=summary)
+            ax = sns.lineplot(data=data, x=DATE_LABEL, y=summary, hue=hue_label)
+        ax.set(xlabel="Date", ylabel=summary)
         return fig, ax
+
+    def _plot_overlap_plotly(data, hue_label):
+        """Helper function to reduce duplicate code by plotting the summarized data lines as overlapped
+
+        Args:
+            data: facet_data for the overlapping lines
+            hue_label: column that has the "hue" facet
+
+        Returns:
+            fig and ax from the plt subplot with the data plotted appropriately
+        """
+        if summary == "count":  # Positive and negative lines for each hue
+            data = pd.melt(
+                data,
+                id_vars=[DATE_LABEL, hue_label],
+                value_vars=[POS_LABEL, NEG_LABEL],
+                value_name="count",
+                var_name="label"
+            )
+            fig = px.line(
+                data, x=DATE_LABEL, y="count", line_group=hue_label, color="label", color_discrete_map=COUNT_COLORS
+            )
+        else:
+            fig = px.line(data, x=DATE_LABEL, y=summary, color=hue_label)
+        fig.update_layout(xaxis_title="Date", yaxis_title=summary)
+        return fig
+
+    def _get_count_kwargs(curr_kwargs):
+        curr_kwargs["data_frame"] = pd.melt(
+            curr_kwargs["data_frame"],
+            id_vars=[i for i in (DATE_LABEL, KEYWORD_LABEL, SOURCE_LABEL) if i in curr_kwargs["data_frame"].columns],
+            value_vars=[POS_LABEL, NEG_LABEL],
+            value_name=summary,
+            var_name="label",
+        )
+        curr_kwargs["color"] = "label"
+        curr_kwargs["color_discrete_map"] = COUNT_COLORS
+        return curr_kwargs
 
     # Processes the four possible options of faceting, both, one, other, or none
     # Creates plots that separates the data across the facets by drawing individual lines for each group of data
     # If overlap is True, all lines will be drawn on the same plot
     # If overlap is False, the plots will be faceted using seaborn FacetGrid corresponding to the facet options and
     # one line will be drawn on each plot
-    if facet_keywords and facet_sources:
-        facet_data = pd.concat([_compute_summary_data(keyword, source) for source in sources for keyword in keywords])
-        if overlap:
-            # Combine facet label to create a (M x N)-unique list of names for facetting on a single column
-            facet_data['Keyword Source'] = facet_data[KEYWORD_LABEL] + "_" + facet_data[SOURCE_LABEL]
-            fig, ax = _plot_overlap(facet_data, 'Keyword Source')
+    if backend == "matplotlib":
+        if facet_keywords and facet_sources:
+            if overlap:
+                # Combine facet label to create a (M x N)-unique list of names for facetting on a single column
+                facet_data["Keyword Source"] = facet_data[KEYWORD_LABEL] + "_" + facet_data[SOURCE_LABEL]
+                fig, ax = _plot_overlap_matplotlib(facet_data, "Keyword Source")
+            else:
+                g = sns.FacetGrid(
+                    data=facet_data, row=KEYWORD_LABEL, col=SOURCE_LABEL, hue=KEYWORD_LABEL, sharey=False, aspect=2
+                )
+                fig, ax = _plot_facet_grid(g)
+        elif facet_keywords:
+            if overlap:
+                fig, ax = _plot_overlap_matplotlib(facet_data, KEYWORD_LABEL)
+                ax.legend(title="Keywords")
+            else:
+                g = sns.FacetGrid(data=facet_data, row=KEYWORD_LABEL, hue=KEYWORD_LABEL, sharey=False, aspect=2)
+                fig, ax = _plot_facet_grid(g)
+        elif facet_sources:
+            if overlap:
+                fig, ax = _plot_overlap_matplotlib(facet_data, SOURCE_LABEL)
+                ax.legend(title="Sources")
+            else:
+                g = sns.FacetGrid(data=facet_data, row=SOURCE_LABEL, hue=SOURCE_LABEL, sharey=False, aspect=2)
+                fig, ax = _plot_facet_grid(g)
         else:
-            g = sns.FacetGrid(data=facet_data, row=KEYWORD_LABEL, col=SOURCE_LABEL, hue=KEYWORD_LABEL, sharey=False, aspect=2)
-            fig, ax = _plot_facet_grid(g)
-    elif facet_keywords:
-        facet_data = pd.concat([_compute_summary_data(keyword=keyword) for keyword in keywords])
-        if overlap:
-            fig, ax = _plot_overlap(facet_data, KEYWORD_LABEL)
-            ax.legend(title='Keywords')
+            # If no facets are used we can have some fun by customizing more since everything will be drawn on a single
+            # graph that is more or less well-defined compared to the others
+            fig, ax = plt.subplots(1)
+            if summary == "count":
+                sns.lineplot(data=facet_data, x=DATE_LABEL, y=POS_LABEL, color="green", ax=ax)
+                sns.lineplot(data=facet_data, x=DATE_LABEL, y=NEG_LABEL, color="red", alpha=0.5, ax=ax)
+                ax.legend(labels=[POS_LABEL, NEG_LABEL], loc="upper left")
+            else:
+                sns.lineplot(data=facet_data, x=DATE_LABEL, y=summary, ax=ax)
+            ax.set_xlabel("Date")
+            ax.set_ylabel(summary)
+            ax.set_title(
+                f"{summary} on {plot_data.shape[0]} texts between {plot_data[date_col].min().date()} and"
+                f" {plot_data[date_col].max().date()}".title()
+            )
+    elif backend == "plotly":
+        plot_kwargs = {
+            "data_frame": facet_data,
+            "x": DATE_LABEL,
+            "y": summary,
+            "labels": {DATE_LABEL: "Date"},
+        }
+        if facet_keywords and facet_sources:
+            if overlap:
+                # Combine facet label to create a (M x N)-unique list of names for facetting on a single column
+                facet_data["Keyword Source"] = facet_data[KEYWORD_LABEL] + "_" + facet_data[SOURCE_LABEL]
+                fig = _plot_overlap_plotly(facet_data, "Keyword Source")
+            else:
+                if summary == "count":
+                    plot_kwargs = _get_count_kwargs(plot_kwargs)
+                else:
+                    plot_kwargs["color"] = KEYWORD_LABEL
+                fig = px.line(**plot_kwargs, facet_row=KEYWORD_LABEL, facet_col=SOURCE_LABEL)
+                fig.update_layout(legend_title_text="Keywords")
+        elif facet_keywords:
+            if overlap:
+                fig = _plot_overlap_plotly(facet_data, KEYWORD_LABEL)
+            else:
+                if summary == "count":
+                    plot_kwargs = _get_count_kwargs(plot_kwargs)
+                else:
+                    plot_kwargs["color"] = KEYWORD_LABEL
+                fig = px.line(**plot_kwargs, facet_row=KEYWORD_LABEL)
+            fig.update_layout(legend_title_text="Keywords")
+        elif facet_sources:
+            if overlap:
+                fig = _plot_overlap_plotly(facet_data, SOURCE_LABEL)
+            else:
+                if summary == "count":
+                    plot_kwargs = _get_count_kwargs(plot_kwargs)
+                else:
+                    plot_kwargs["color"] = SOURCE_LABEL
+                fig = px.line(**plot_kwargs, facet_row=SOURCE_LABEL)
+            fig.update_layout(legend_title_text="Sources")
         else:
-            g = sns.FacetGrid(data=facet_data, row=KEYWORD_LABEL, hue=KEYWORD_LABEL, sharey=False, aspect=2)
-            fig, ax = _plot_facet_grid(g)
-    elif facet_sources:
-        facet_data = pd.concat([_compute_summary_data(source=source) for source in sources])
-        if overlap:
-            fig, ax = _plot_overlap(facet_data, SOURCE_LABEL)
-            ax.legend(title='Sources')
-        else:
-            g = sns.FacetGrid(data=facet_data, row=SOURCE_LABEL, hue=SOURCE_LABEL, sharey=False, aspect=2)
-            fig, ax = _plot_facet_grid(g)
+            # If no facets are used we can have some fun by customizing more since everything will be drawn on a single
+            # graph that is more or less well-defined compared to the others
+            if summary == "count":
+                plot_kwargs = _get_count_kwargs(plot_kwargs)
+            fig = px.line(**plot_kwargs)
+            fig.update_layout(
+                title=f"{summary} on {plot_data.shape[0]} texts between {plot_data[date_col].min().date()} and "
+                f"{plot_data[date_col].max().date()}".title(),
+                xaxis_title="Date",
+                yaxis_title=summary,
+            )
+        if facet_keywords or facet_sources:
+            fig.update_yaxes(matches=None)
+            fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
     else:
-        # If no facets are used we can have some fun by customizing more since everything will be drawn on a single
-        # graph that is more or less well-defined compared to the others
-        facet_data = _compute_summary_data()
-        fig, ax = plt.subplots(1)
-        if summary == 'count':
-            sns.lineplot(data=facet_data, x=DATE_LABEL, y='positive', color='green', ax=ax)
-            sns.lineplot(data=facet_data, x=DATE_LABEL, y='negative', color='red', alpha=.5, ax=ax)
-            ax.legend(labels=['Positive', 'Negative'], loc='upper left')
-        else:
-            sns.lineplot(data=facet_data, x=DATE_LABEL, y=SUMMARY_LABEL, ax=ax)
-        ax.set_xlabel('Date')
-        ax.set_ylabel(summary)
-        ax.set_title(
-            f'{summary} on {plot_data.shape[0]} texts between {plot_data[date_col].min().date()} and'
-            f' {plot_data[date_col].max().date()}'.title()
-        )
-    return fig, ax
+        raise ValueError(f"Plotting backend {backend} not recognized!")
+    return fig
