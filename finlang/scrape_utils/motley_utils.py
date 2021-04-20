@@ -129,7 +129,7 @@ def get_transcripts_data(transcript_links: List[str]) -> Dict[str, Dict[str, Any
         dictionary of data extracted from each transcript, keyed by the respective (sub)link
     """
     data = OrderedDict()
-    for link in pbar := tqdm(transcript_links, total=len(transcript_links)):
+    for link in (pbar := tqdm(transcript_links, total=len(transcript_links))):
         pbar.set_description(link)
         data[link] = get_transcript_data(link)
     pbar.close()
@@ -167,7 +167,7 @@ def get_articles_data(article_links: List[str]) -> Dict[str, Dict[str, Any]]:
         information from that article
     """
     data = OrderedDict()
-    for link in pbar := tqdm(article_links, total=len(article_links)):
+    for link in (pbar := tqdm(article_links, total=len(article_links))):
         pbar.set_description(link)
         data[link] = get_article_data(link)
     pbar.close()
