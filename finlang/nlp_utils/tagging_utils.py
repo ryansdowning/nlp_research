@@ -1,21 +1,23 @@
 """This module is provides various utilities for apply NLP tagging services to dataframes of text"""
-from typing import Iterable, List, Optional, Tuple, Union
+from typing import Iterable, List, Optional, Tuple, Union, Set, Callable, Dict
 
 import numpy as np
 import pandas as pd
 import torch
 from flashtext import KeywordProcessor  # pylint: disable=E0401
 from tqdm import tqdm
+from loguru import logger
 from transformers import PretrainedConfig  # pylint: disable=E0401
 from transformers import PreTrainedTokenizer, pipeline
 from collections import defaultdict
+import dask.dataframe as dd
 
 tqdm.pandas()
 torch.backends.cudnn.enabled = True
 
 TASK_SETTINGS = {
     "feature-extraction": {"suffix": "_extracted"},
-    "finlang-analysis": {"suffix": "_sentiment"},
+    "sentiment-analysis": {"suffix": "_sentiment"},
     "ner": {"suffix": "_nertag"},
     "question-answering": {"suffix": "_qa"},
     "fill-mask": {"suffix": "_fill"},
@@ -56,45 +58,40 @@ def tagging_pipeline(
             - A Model instance
             - Some (optional) post processing for enhancing model's output
 
-
     Args:
         task (`str`):
             The task defining which pipeline will be returned. Currently accepted tasks are:
             - "feature-extraction": will return child of `~transformers.FeatureExtractionPipeline`
-            - "finlang-analysis": will return child of `~transformers.TextClassificationPipeline`
+            - "sentiment-analysis": will return child of `~transformers.TextClassificationPipeline`
             - "ner": will return child of `~transformers.TokenClassificationPipeline`
             - "question-answering": will return child of `~transformers.QuestionAnsweringPipeline`
             - "fill-mask": will return child of `~transformers.FillMaskPipeline`
             - "summarization": will return child of `~transformers.SummarizationPipeline`
             - "translation_xx_to_yy": will return a `~transformers.TranslationPipeline`
             - "text-generation": will return child of `~transformers.TextGenerationPipeline`
-        model (`str` or `~transformers.PreTrainedModel` or `~transformers.TFPreTrainedModel`,
-            `optional`, defaults to `None`):
+        model (`str` or `~transformers.PreTrainedModel` or `~transformers.TFPreTrainedModel`, `optional`,
+         defaults to `None`):
             The model that will be used by the pipeline to make predictions. This can be `None`,
             a model identifier or an actual pre-trained model inheriting from
             `~transformers.PreTrainedModel` for PyTorch and `~transformers.TFPreTrainedModel` for
             TensorFlow.
-
             If `None`, the default for this pipeline will be loaded.
         config (`str` or `~transformers.PretrainedConfig`, `optional`, defaults to `None`):
             The configuration that will be used by the pipeline to instantiate the model.
             This can be `None`, a model identifier or an actual pre-trained model configuration
             inheriting from `~transformers.PretrainedConfig`.
-
             If `None`, the default for this pipeline will be loaded.
         tokenizer (`str` or `~transformers.PreTrainedTokenizer`, `optional`, defaults to `None`):
             The tokenizer that will be used by the pipeline to encode data for the model. This can
             be `None`, a model identifier or an actual pre-trained tokenizer inheriting from
             `~transformers.PreTrainedTokenizer`.
-
             If `None`, the default for this pipeline will be loaded.
         framework (str):
             The framework to use, either "pt" for PyTorch or "tf" for TensorFlow. The specified
             framework must be installed.
-
             If no framework is specified, will default to the one currently installed. If no
             framework is specified and both frameworks are installed, will default to PyTorch.
-         revision(str):
+        revision(str):
             When passing a task name or a string model identifier: The specific model version to use. It can be a
             branch name, a tag name, or a commit id, since we use a git-based system for storing models and other
             artifacts on huggingface.co, so ``revision`` can be any identifier allowed by git.
@@ -138,21 +135,38 @@ def tagging_pipeline(
             source: Union[str, List[str]] = "text",
             tag_suffix: Optional[str] = None,
             file: Optional[str] = None,
+            workers: Optional[int] = None,
+            progress: Optional[bool] = True,
             *args,
             **kwargs_,
         ):
             _backend_state = torch.backends.cudnn.benchmark
             torch.backends.cudnn.benchmark = True
+            if use_fast and workers is not None:
+                logger.warning(
+                    "Using use_fast=True while running the job on multiple workers could lead to data races related "
+                    "to tokenization. If errors are produced with this run, please try again using use_fast=False or "
+                    "only using 1 worker. More information at: https://github.com/huggingface/tokenizers/issues/537"
+                )
 
             tag_suffix = tag_suffix or TASK_SETTINGS[task]["suffix"]
             data, source = _handle_data_and_source(df_or_file, source)
+            if workers is not None:
+                data = dd.from_pandas(data, npartitions=workers)
+                data = data.map_partitions(
+                    lambda partition: self.__call__(partition, source, tag_suffix, progress=False, *args, **kwargs_)
+                ).compute()
+                if file is not None:
+                    data.to_csv(file)
+                return data
             # Iterate through source columns and apply parent pipeline to each element with
             # the given args and kwargs
             for col in source:
-                tmp = data[col].progress_apply(
-                    lambda text: super(TaggingPipeline, self).__call__(text, *args, **kwargs_)
+                tmp_func = data[col].progress_apply if progress else data[col].apply
+                result = tmp_func(
+                    lambda text: super().__call__(text, *args, **kwargs_)
                 )
-                data.loc[:, f"{col}{tag_suffix}"] = tmp
+                data.loc[:, f"{col}{tag_suffix}"] = result
 
             torch.backends.cudnn.benchmark = _backend_state
 
@@ -318,8 +332,8 @@ def get_keywords_sentiment(
     model_name_or_path: str = SENTIMENT_MODEL,
     summarize: str = "sum",
 ) -> pd.Series:
-    """Calculates the difference in the number of positively and negatively predicted keywords found
-    throughout the given source texts
+    """Aggregates the number of positively and negatively predicted keywords found throughout the given source
+    texts for each given keyword
 
     Args:
         df_or_file: Pandas dataframe or path to csv file with data
@@ -327,9 +341,12 @@ def get_keywords_sentiment(
         source: column name or names containing the source text
         case_sensitive: Toggle keyword case sensitivity
         model_name_or_path: name of transformers model to use or path to a model on local machine
+        summarize: How to aggregate the sentiment scores, options are {'sum', 'count'}. If sum, simply compute the
+                   difference between the number of positive and negative texts for each keyword. If count, provide
+                   a tuple of the number of positive and negative texts for each keyword.
 
     Returns:
-        Series containing the finlang scores for the corresponding keywords in same order as keywords input
+        Series containing the sentiment scores for the corresponding keywords in same order as keywords input
     """
     if (summarize := summarize.casefold()) not in SENTIMENT_SUMMARY:
         raise AttributeError(f"Summarize currently supports: {SENTIMENT_SUMMARY}, got: {summarize}")
@@ -339,23 +356,23 @@ def get_keywords_sentiment(
         raise ValueError("No keywords found in source text")
     data = data[data[f"{source}{TASK_SETTINGS['keywords']['suffix']}"].astype(bool)]
 
-    # Get finlang with (-1, 1) labels
-    sentiment_tagger = tagging_pipeline("finlang-analysis", model_name_or_path)
+    # Get sentiment with (-1, 1) labels
+    sentiment_tagger = tagging_pipeline("sentiment-analysis", model_name_or_path)
     data = sentiment_tagger(data, source)
 
     def _label_to_score(label):
-        """Helper function to transform finlang output to [-1, 1] values respective to [NEGATIVE, POSITIVE]"""
+        """Helper function to transform sentiment output to [-1, 1] values respective to [NEGATIVE, POSITIVE]"""
         try:
             return 1 if label[0]["label"] == "POSITIVE" else -1
         except TypeError:
             return 0
 
     # Convert label to int
-    data.loc[:, "sentiment_score"] = data[f"{source}{TASK_SETTINGS['finlang-analysis']['suffix']}"].apply(
+    data.loc[:, "sentiment_score"] = data[f"{source}{TASK_SETTINGS['sentiment-analysis']['suffix']}"].apply(
         _label_to_score
     )
 
-    # Encode keyword vectors and multiply them against the finlang score to get keyword scores
+    # Encode keyword vectors and multiply them against the sentiment score to get keyword scores
     encoded = _multi_hot_encode(data[f"{source}{TASK_SETTINGS['keywords']['suffix']}"].values)
     keyword_scores = encoded.T * data["sentiment_score"].values
 
@@ -371,7 +388,7 @@ def get_keywords_sentiment(
         keyword_scores = keyword_scores.apply(_sentiment_tuple, axis=1)
         default = (0, 0)
 
-    # Fill keywords without any matches to a finlang of 0
+    # Fill keywords without any matches to a sentiment of 0
     missing = list(set(keywords) - set(keyword_scores.index))
     missing_scores = pd.Series([default] * len(missing), index=missing)
     keyword_scores = pd.concat((keyword_scores, missing_scores))
@@ -429,7 +446,9 @@ def keyword_bool_proc(keywords, case_sensitive):
     return bool_proc
 
 
-def expanded_list_linking_index(data: Union[pd.Series, pd.DataFrame], keyword_col: Optional[str] = None):
+def expanded_list_linking_index(
+        data: Union[pd.Series, pd.DataFrame], keyword_col: Optional[str] = None, index_col: Optional[str] = None
+) -> Dict[str, Set[int]]:
     """Function to help create a mapping for keywords to given data indexes from a pandas DataFrame. This helps save a
     lot of memory when working with large datasets or a large number of keywords. Instead of expanding the rows or
     creating a multi-hot encode, we instead just create a map that can be used as a separate data structure to support
@@ -446,18 +465,47 @@ def expanded_list_linking_index(data: Union[pd.Series, pd.DataFrame], keyword_co
     if isinstance(data, pd.Series):
         data = pd.DataFrame(data, columns=['data'])
         keyword_col = 'data'
+
     elif isinstance(data, pd.DataFrame):
-        if keyword_col is None or keyword_col not in data.columns:
+        if keyword_col is None or keyword_col not in data.columns or (index_col and index_col not in data.columns):
             raise AttributeError(
-                f"Data is of type pandas.DataFrame but the keyword_col parameter was not supplied, or the given column"
-                f" is not in <data>, must be one of: {data.columns}"
+                f"Data is of type pandas.DataFrame but the keyword_col parameter was not supplied, or the given "
+                f"keyword or index column is not in <data>, must be one of: {data.columns}"
             )
     else:
         raise AttributeError(f"Data must be of type pandas.Series or pandas.DataFrame, got: {type(data)}")
 
+    if index_col is None:
+        def get_index(row: Tuple[int, pd.DataFrame]):
+            return row[0]
+    else:
+        def get_index(row: Tuple[int, pd.DataFrame]):
+            return row[1][index_col]
+
     # Create dictionary that maps keywords to corresponding indexes in data
     keywords_linking = defaultdict(set)
-    for idx, keywords in tqdm(data[[keyword_col]].iterrows(), total=data.shape[0]):
-        for keyword in keywords[keyword_col]:
-            keywords_linking[keyword].add(idx)
+    for row_tuple in tqdm(data.iterrows(), total=data.shape[0]):
+        index = get_index(row_tuple)
+        for keyword in row_tuple[1][keyword_col]:
+            keywords_linking[keyword].add(index)
     return keywords_linking
+
+
+def sentiment_sign(model_name_or_path: str = SENTIMENT_MODEL, binary=False, **kwargs) -> Callable[[str], int]:
+    """Basic factory for creating a callable that takes text as input and returns a sentiment prediction for that text
+
+    Args:
+        model_name_or_path: Name of huggingface model to use for sentiment prediction
+        binary: Toggle type of output for sentiment prediction. If True, output will be {0, 1}. Default False, output is
+                {-1, 1}
+        **kwargs: Additional keyword arguments to pass through to the pipeline factory for huggingface
+
+    Returns:
+        Callable that performs sentiment inference for provided text. Parameter name <text>
+    """
+    model = pipeline('sentiment-analysis', model_name_or_path, **kwargs)
+
+    def predict(text):
+        pred = int(model(text)[0]['label'] == 'POSITIVE')
+        return pred if binary else (pred * 2) - 1
+    return predict
