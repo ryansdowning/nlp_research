@@ -438,6 +438,11 @@ def _get_pushshift(
     if checkpoint_freq is not None and file is None:
         raise AttributeError("Checkpoint frequency provided without specifying a file path to save to!")
 
+    if start is not None:
+        start = int(start.timestamp())
+    if end is not None:
+        end = int(end.timestamp())
+
     if data_fields is not None:
         data = api_func(subreddit=subreddit, after=start, before=end, filter=data_fields, **kwargs)
     else:
