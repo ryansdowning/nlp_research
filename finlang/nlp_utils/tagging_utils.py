@@ -1,16 +1,16 @@
 """This module is provides various utilities for apply NLP tagging services to dataframes of text"""
-from typing import Iterable, List, Optional, Tuple, Union, Set, Callable, Dict
+from collections import defaultdict
+from typing import Callable, Dict, Iterable, List, Optional, Set, Tuple, Union
 
+import dask.dataframe as dd
 import numpy as np
 import pandas as pd
 import torch
 from flashtext import KeywordProcessor  # pylint: disable=E0401
-from tqdm import tqdm
 from loguru import logger
+from tqdm import tqdm
 from transformers import PretrainedConfig  # pylint: disable=E0401
 from transformers import PreTrainedTokenizer, pipeline
-from collections import defaultdict
-import dask.dataframe as dd
 
 tqdm.pandas()
 torch.backends.cudnn.enabled = True

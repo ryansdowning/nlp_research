@@ -2,12 +2,13 @@
 interacting with database tables and implements a basic factory for generating WHERE clauses for sql queries. Also
 provides necessary API functionality for the alpha sentiment dashboard
 """
-from collections import OrderedDict
+import datetime
 from abc import ABC, abstractmethod
+from collections import OrderedDict
 from enum import Enum
 from functools import partial
-import datetime
-from typing import Any, Dict, Iterable, List, Optional, Tuple, Union, Set, Callable
+from typing import (Any, Callable, Dict, Iterable, List, Optional, Set, Tuple,
+                    Union)
 
 import dask.dataframe as dd
 import pandas as pd

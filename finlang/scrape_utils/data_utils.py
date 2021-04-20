@@ -1,14 +1,14 @@
 """This module provides base utilities for scraping and streaming data"""
 import csv
+import datetime
 import os
 import re
-import datetime
-from typing import Any, Generator, Iterable, List, Optional, Tuple, Union, Dict
+import traceback
+from typing import Any, Dict, Generator, Iterable, List, Optional, Tuple, Union
 
 import bs4
 from loguru import logger
 from tqdm import tqdm
-import traceback
 
 from finlang.nlp_utils import db_utils as dbu
 from finlang.nlp_utils import tagging_utils as tu
