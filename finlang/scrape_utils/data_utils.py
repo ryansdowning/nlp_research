@@ -1,14 +1,19 @@
+"""This module provides base utilities for scraping and streaming data"""
 import csv
 import os
 import re
-import time
-from typing import Any, Generator, Iterable, List, Optional, Tuple, Union
+import datetime
+from typing import Any, Generator, Iterable, List, Optional, Tuple, Union, Dict
 
 import bs4
 from loguru import logger
+from tqdm import tqdm
+import traceback
 
 from finlang.nlp_utils import db_utils as dbu
 from finlang.nlp_utils import tagging_utils as tu
+
+tqdm.pandas()
 
 
 def open_file_stream(file: str, data_fields: List[str]):
@@ -111,36 +116,52 @@ def get_paragraph(header: bs4.element.Tag) -> str:
     page = [header.text]
     elem = next_element(header)
     while elem and elem.name != header.name:
-        s = elem.string
-        if s:
-            page.append(s)
+        line = elem.string
+        if line:
+            page.append(line)
         elem = next_element(elem)
     return re.sub(r"\s{2,}", "\n", "\n".join(page))
 
 
 def stream_data(
     stream: Generator[Any, None, None],
-    data_fields: List[str] = None,
+    data_fields: List[str],
     file: Optional[str] = None,
     table: Optional[dbu.DBTable] = None,
     keywords: Optional[List[str]] = None,
     keyword_fields: Optional[str] = None,
     case_sensitive: bool = True,
     timestamp: bool = False,
+    timestamp_field: str = '_timestamp',
+    output_field_map: Optional[Dict[str, str]] = None,
+    metadata: Optional[Dict[str, Any]] = None,
+    sentiment_model: Optional[str] = None,
+    sentiment_source: Optional[str] = None,
+    sentiment_dest: Optional[str] = None,
 ):
-    """Creates a process that indefinitely streams data from a subreddit to a file
+    """Creates a process that indefinitely streams data from a stream (generator that doesn't end) to a file
 
     Args:
         stream: Generator that outputs a stream of data corresponding to the given data fields
-        data_fields: Ordered list of attributes to extract from submissions/comments
-        keywords: If None, this argument has no affect. If keywords are provided, comments and submissions are filtered
-                  if they do not contain a keyword in their body or selftext respectively
+        data_fields: Ordered list of attributes to extract from data stream
+        keywords: If None, this argument has no affect. If keywords are provided, data stream is filtered if they do not
+                  contain a keyword in their keyword_fields
         keyword_fields: String corresponding to the data field(s) to match keywords for. If multiple are provided, the
                        fields will be joined by a space before searching for keywords.
         case_sensitive: If keywords are provided, flag for case sensitive matching. Default True, on.
         file: Path to file (csv) to write data to
         table: DBTable object that can be provided to insert data directly into SQL database
         timestamp: If true, will add the timestamp the data was saved as an entry in the row. Default False
+        timestamp_field: Column name to be used if timestamp is being entered. Will use "_timestamp" by default
+        output_field_map: Optionally map input data_fields (including timestamp and sentiment) to different
+                          output_fields. Keys are data_field names and values are the csv or database column names
+        metadata: Optionally add static data to each data stream. Dictionary where keys are column names and values are
+                  static values to be written for those columns for each entry
+        sentiment_model: If provided, will apply sentiment model of given name/path to the sentiment_source column and
+                         output to the sentiment_dest column. sentiment_source and sentiment_dest must be provided if
+                         sentiment_model is given
+        sentiment_source: data field of the text field to perform sentiment inference on if sentiment_model is supplied
+        sentiment_dest: name of data field to output the sentiment prediction for if sentiment_model is supplied
 
     Returns:
         None - Process runs until error is thrown or is interrupted
@@ -150,8 +171,21 @@ def stream_data(
         raise AttributeError("Must provide at least one of <file> or <table> parameters to stream data to!")
     if keywords is not None and keyword_fields is None:
         raise AttributeError("Keywords were provided without specifying any keyword fields to match to!")
+    if sentiment_model is not None:
+        if sentiment_dest is None or sentiment_source is None:
+            raise AttributeError(
+                f"If providing a sentiment model for analysis, must also supply sentiment source column name and "
+                f"sentiment destination column name, got {sentiment_source=}, {sentiment_dest=}"
+            )
+        if sentiment_source not in data_fields:
+            raise AttributeError(
+                f"Sentiment model and source were provided, but could not find source column: {sentiment_source} "
+                f"in data_fields: {data_fields}"
+            )
+        sentiment_source = data_fields.index(sentiment_source)
+        sentiment_model = tu.sentiment_sign(sentiment_model)
 
-    if keywords:
+    if keywords is not None:
         if isinstance(keyword_fields, str):
             keyword_fields = {keyword_fields}
 
@@ -168,18 +202,46 @@ def stream_data(
         idxs = None
         proc = None
 
-    if file:
-        open_file_stream(file, data_fields)
-    cols = ", ".join(data_fields)
+    columns = data_fields.copy()
+    # Add metadata (static values), create tuple to add to each row
+    if metadata is not None:
+        meta = []
+        for field, data in metadata.items():
+            columns += (field,)
+            meta.append(data)
+        meta = tuple(meta)
+    else:
+        meta = None
+    if timestamp:  # Add timestamp field
+        columns += (timestamp_field,)
+    if sentiment_model is not None:   # Add sentiment field
+        columns += (sentiment_dest,)
+    if output_field_map:  # Rename columns as specified
+        columns = tuple(output_field_map[field] if field in output_field_map else field for field in columns)
+    if file:  # Began stream to file
+        open_file_stream(file, columns)
+    cols = ", ".join(columns)
+
     for data in stream:
+        # Additional data fields are processed in the same order as adding the columns in the above if-else tree
         if proc is not None:  # If filtering for keywords, run keyword check on keyword fields
             keyword_data = " ".join(str(data[idx]) for idx in idxs)
             if not proc(keyword_data):  # If no match, skip this iteration
                 continue
+        if meta is not None:
+            data += meta  # Add metadata
         if timestamp:
-            data += (time.time(),)
+            data += (datetime.datetime.now(),)  # Add timestamp
+        if sentiment_model is not None:  # perform sentiment inference on source data field and insert prediction
+            text = data[sentiment_source]
+            try:
+                data += (sentiment_model(text),)  # Attempt to add sentiment model
+            except Exception:
+                logger.warning("sentiment inference failed with err: %s" % traceback.format_exc())
+                data += (None,)  # Add None if it fails
         if table:
-            table.insert(data, data_fields)
+            # Create record and insert
+            table.insert_one(dict(zip(columns, data)))
         if file:
             with open(file, "a", encoding="utf-8") as out:
                 logger.info("writing %s data to to file at: %s" % (cols, file))
