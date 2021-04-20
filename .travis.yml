@@ -2,6 +2,15 @@ language: python
 python:
   - "3.8"
 
+services:
+  - mysql
+
+addons:
+  apt:
+    packages:
+      - unixodbc
+      - unixodbc-dev
+
 before_script: pip install poetry
 
 script:
