@@ -1,0 +1,11 @@
+language: python
+python:
+  - "3.8"
+
+before_script: pip install poetry
+
+script:
+  - poetry install
+  - poetry run pytest -W ignore finlang/tests/
+  - poetry run isort -c finlang/
+  - poetry run pylint finlang/ --max-line-length=120 --ignore=tests --fail-under=9
