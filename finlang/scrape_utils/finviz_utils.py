@@ -168,7 +168,7 @@ def _multiple_tickers_df(
         pandas dataframe of the combined results with an additional <TICKER_COL> column
     """
     func_dfs = []
-    for ticker in pbar := tqdm(tickers, total=len(tickers)):
+    for ticker in (pbar := tqdm(tickers, total=len(tickers))):
         soup = get_ticker_soup(ticker)
         pbar.set_description(ticker)
         func_df = df_func(soup, **kwargs)
