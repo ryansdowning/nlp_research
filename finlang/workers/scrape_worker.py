@@ -255,6 +255,7 @@ else:
 # a cooldown period is waited
 while True:
     try:
+        # Start data stream
         stream_func(
             data_fields=args.fields,
             file=FILE,
@@ -271,11 +272,15 @@ while True:
             sentiment_dest=SENTIMENT_DEST,
         )
     except Exception as err:
+        # Catch error and invoke cooldown if errors were thrown repeatedly
         logger.exception(
             f"Something horrible has happened! Error thrown from scrape worker\n{err}\n{traceback.format_exc()}"
         )
+        # Remove oldest error timestamp and add current err timestamp (cycle the list)
         CD_TIMER.pop(0)
         CD_TIMER.append(time.time())
+        # If the time between the oldest and most recent error timestamps is less than the limit, invoke a cooldown
+        # and throw an additional exception
         if CD_TIMER[0] - CD_TIMER[-1] < CD_LIMIT:
             logger.exception(
                 f"Scrape worker failed {CD_ATTEMPTS} times in less than {CD_LIMIT} seconds! Sleeping for "
