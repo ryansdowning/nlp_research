@@ -1,0 +1,493 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>finlang.scrape_utils.finviz_utils module &#8212; finlang 0.1.0 documentation</title>
+    
+  <link href="_static/css/theme.css" rel="stylesheet" />
+  <link href="_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.1c5a1a01449ed65a7b51.js">
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+<a class="navbar-brand" href="index.html">
+<p class="title">finlang</p>
+</a>
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    <ul class="current nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="finlang.config.html">
+   finlang.config package
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="finlang.config.constants.html">
+     finlang.config.constants module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="finlang.config.db_config.html">
+     finlang.config.db_config module
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="finlang.nlp_utils.html">
+   finlang.nlp_utils package
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="finlang.nlp_utils.db_utils.html">
+     finlang.nlp_utils.db_utils module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="finlang.nlp_utils.tagging_utils.html">
+     finlang.nlp_utils.tagging_utils module
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="finlang.plotting.html">
+   finlang.plotting package
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="finlang.plotting.app.html">
+     finlang.plotting.app module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="finlang.plotting.plotting_utils.html">
+     finlang.plotting.plotting_utils module
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="finlang.scrape_utils.html">
+   finlang.scrape_utils package
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="finlang.scrape_utils.article_utils.html">
+     finlang.scrape_utils.article_utils module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="finlang.scrape_utils.data_utils.html">
+     finlang.scrape_utils.data_utils module
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     finlang.scrape_utils.finviz_utils module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="finlang.scrape_utils.motley_utils.html">
+     finlang.scrape_utils.motley_utils module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="finlang.scrape_utils.reddit_utils.html">
+     finlang.scrape_utils.reddit_utils module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="finlang.scrape_utils.twitter_utils.html">
+     finlang.scrape_utils.twitter_utils module
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="finlang.workers.html">
+   finlang.workers package
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="finlang.workers.scrape_worker.html">
+     finlang.workers.scrape_worker module
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+  </div>
+</nav>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+              
+              <div class="toc-item">
+                
+
+<nav id="bd-toc-nav">
+    
+</nav>
+              </div>
+              
+              <div class="toc-item">
+                
+              </div>
+              
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <div class="section" id="module-finlang.scrape_utils.finviz_utils">
+<span id="finlang-scrape-utils-finviz-utils-module"></span><h1>finlang.scrape_utils.finviz_utils module<a class="headerlink" href="#module-finlang.scrape_utils.finviz_utils" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="finlang.scrape_utils.finviz_utils.get_news_df">
+<code class="sig-prename descclassname"><span class="pre">finlang.scrape_utils.finviz_utils.</span></code><code class="sig-name descname"><span class="pre">get_news_df</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ticker_soup</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bs4.BeautifulSoup</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="headerlink" href="#finlang.scrape_utils.finviz_utils.get_news_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scrape news table from finviz page and format into pandas dataframe</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ticker_soup</strong> – BeautifulSoup object from the finviz page</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>pandas dataframe that contains information from the articles found in the news table of the soup object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.scrape_utils.finviz_utils.get_ratings_df">
+<code class="sig-prename descclassname"><span class="pre">finlang.scrape_utils.finviz_utils.</span></code><code class="sig-name descname"><span class="pre">get_ratings_df</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ticker_soup</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bs4.BeautifulSoup</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="headerlink" href="#finlang.scrape_utils.finviz_utils.get_ratings_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scrape analyst ratings table from finviz page and format into pandas dataframe</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ticker_soup</strong> – BeautifulSoup object from the finviz page</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>pandas dataframe that contains information from the analyst ratings found in the soup object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.scrape_utils.finviz_utils.get_ticker_info">
+<code class="sig-prename descclassname"><span class="pre">finlang.scrape_utils.finviz_utils.</span></code><code class="sig-name descname"><span class="pre">get_ticker_info</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ticker</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#finlang.scrape_utils.finviz_utils.get_ticker_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Conglomerate of all scraping functionality for finviz tickers</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ticker</strong> – ticker to get finviz data for</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dictionary with information fields and their corresponding data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.scrape_utils.finviz_utils.get_ticker_response">
+<code class="sig-prename descclassname"><span class="pre">finlang.scrape_utils.finviz_utils.</span></code><code class="sig-name descname"><span class="pre">get_ticker_response</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ticker</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">requests.models.Response</span><a class="headerlink" href="#finlang.scrape_utils.finviz_utils.get_ticker_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes get request for given ticker on Finviz</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ticker</strong> – ticker to get finviz webpage response for</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>response object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.scrape_utils.finviz_utils.get_ticker_soup">
+<code class="sig-prename descclassname"><span class="pre">finlang.scrape_utils.finviz_utils.</span></code><code class="sig-name descname"><span class="pre">get_ticker_soup</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ticker</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bs4.BeautifulSoup</span><a class="headerlink" href="#finlang.scrape_utils.finviz_utils.get_ticker_soup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates BeautifulSoup object from get request for a ticker on Finviz</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ticker</strong> – ticker to get BeautifulSoup for</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>BeautifulSoup object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.scrape_utils.finviz_utils.multiple_tickers_news_df">
+<code class="sig-prename descclassname"><span class="pre">finlang.scrape_utils.finviz_utils.</span></code><code class="sig-name descname"><span class="pre">multiple_tickers_news_df</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tickers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="headerlink" href="#finlang.scrape_utils.finviz_utils.multiple_tickers_news_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the results of pulling news tables from each ticker concatenated and adds a ticker identifying column</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tickers</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of tickers to get news data for</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Concatenated news tables with &lt;TICKER_COL&gt; added</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.scrape_utils.finviz_utils.multiple_tickers_ratings_df">
+<code class="sig-prename descclassname"><span class="pre">finlang.scrape_utils.finviz_utils.</span></code><code class="sig-name descname"><span class="pre">multiple_tickers_ratings_df</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tickers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="headerlink" href="#finlang.scrape_utils.finviz_utils.multiple_tickers_ratings_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the results of pulling analyst rating tables from each ticker concatenated and adds a ticker identifying
+column</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tickers</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of tickers to get news data for</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Concatenated analyst ratings tables with &lt;TICKER_COL&gt; added</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.scrape_utils.finviz_utils.stream_ticker_news">
+<code class="sig-prename descclassname"><span class="pre">finlang.scrape_utils.finviz_utils.</span></code><code class="sig-name descname"><span class="pre">stream_ticker_news</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ticker</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_fields</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="finlang.nlp_utils.db_utils.html#finlang.nlp_utils.db_utils.DBTable" title="finlang.nlp_utils.db_utils.DBTable"><span class="pre">finlang.nlp_utils.db_utils.DBTable</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#finlang.scrape_utils.finviz_utils.stream_ticker_news" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates process that runs indefinitely while streaming ticker news data from finviz to the provided data sink(s)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ticker</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>str</em><em>]</em>) – ticker or list of tickers to stream news data for</p></li>
+<li><p><strong>data_fields</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – Fields to extract from the news table(s). Defaults to None.</p></li>
+<li><p><strong>update</strong> (<em>int</em><em>, </em><em>optional</em>) – How often to request new data from finviz. Defaults to 60 seconds.</p></li>
+<li><p><strong>file</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Path to file (csv) to write data to. Defaults to None.</p></li>
+<li><p><strong>table</strong> (<em>Optional</em><em>[</em><em>dbu.DBTable</em><em>]</em><em>, </em><em>optional</em>) – DBTable object to insert data directly into SQL database.
+Defaults to None.</p></li>
+<li><p><strong>kwargs</strong> – Additional keyword arguments for streaming data</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.scrape_utils.finviz_utils.stream_ticker_ratings">
+<code class="sig-prename descclassname"><span class="pre">finlang.scrape_utils.finviz_utils.</span></code><code class="sig-name descname"><span class="pre">stream_ticker_ratings</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ticker</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_fields</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="finlang.nlp_utils.db_utils.html#finlang.nlp_utils.db_utils.DBTable" title="finlang.nlp_utils.db_utils.DBTable"><span class="pre">finlang.nlp_utils.db_utils.DBTable</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#finlang.scrape_utils.finviz_utils.stream_ticker_ratings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates process that runs indefinitely while streaming ticker analyst ratings data from finviz to the provided
+data sink(s)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ticker</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>str</em><em>]</em>) – ticker or list of tickers to stream analyst ratings data for</p></li>
+<li><p><strong>data_fields</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – Fields to extract from the analyst ratings table(s).
+Defaults to None.</p></li>
+<li><p><strong>update</strong> (<em>int</em><em>, </em><em>optional</em>) – How often to request new data from finviz. Defaults to 60 seconds.</p></li>
+<li><p><strong>file</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Path to file (csv) to write data to. Defaults to None.</p></li>
+<li><p><strong>table</strong> (<em>Optional</em><em>[</em><em>dbu.DBTable</em><em>]</em><em>, </em><em>optional</em>) – DBTable object to insert data directly into SQL database.
+Defaults to None.</p></li>
+<li><p><strong>kwargs</strong> – Additional keyword arguments for streaming data</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.scrape_utils.finviz_utils.ticker_news_stream">
+<code class="sig-prename descclassname"><span class="pre">finlang.scrape_utils.finviz_utils.</span></code><code class="sig-name descname"><span class="pre">ticker_news_stream</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ticker</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_fields</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">60</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#finlang.scrape_utils.finviz_utils.ticker_news_stream" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a generator that yields data extracted from the news table of the provided ticker(s)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ticker</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>str</em><em>]</em>) – ticker or list of tickers to stream data for.</p></li>
+<li><p><strong>data_fields</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – Fields to extract from the news table(s). Defaults to None.</p></li>
+<li><p><strong>update</strong> (<em>int</em><em>, </em><em>optional</em>) – How often to request new data from finviz. Defaults to 60 seconds.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>AttributeError</strong> – If the provided data fields are not present in the news table.</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A generator that yields the extracted data</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Generator</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.scrape_utils.finviz_utils.ticker_ratings_stream">
+<code class="sig-prename descclassname"><span class="pre">finlang.scrape_utils.finviz_utils.</span></code><code class="sig-name descname"><span class="pre">ticker_ratings_stream</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ticker</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_fields</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">60</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#finlang.scrape_utils.finviz_utils.ticker_ratings_stream" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a generator that yields data extracted from the analyst ratings table of the provided ticker(s)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ticker</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>str</em><em>]</em>) – ticker or list of tickers to stream data for.</p></li>
+<li><p><strong>data_fields</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – Fields to extract from the analyst ratings table(s).
+Defaults to None.</p></li>
+<li><p><strong>update</strong> (<em>int</em><em>, </em><em>optional</em>) – How often to request new data from finviz. Defaults to 60 seconds.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>AttributeError</strong> – If the provided data fields are not present in the analyst ratings table.</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A generator that yields the extracted data</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Generator</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+              </div>
+              
+              
+              <div class='prev-next-bottom'>
+                
+
+              </div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+    
+  <script src="_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+
+
+    <footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2021, Ryan Downing.<br/>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>

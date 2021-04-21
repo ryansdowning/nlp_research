@@ -1,0 +1,793 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>finlang.nlp_utils.db_utils module &#8212; finlang 0.1.0 documentation</title>
+    
+  <link href="_static/css/theme.css" rel="stylesheet" />
+  <link href="_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.1c5a1a01449ed65a7b51.js">
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+<a class="navbar-brand" href="index.html">
+<p class="title">finlang</p>
+</a>
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    <ul class="current nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="finlang.config.html">
+   finlang.config package
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="finlang.config.constants.html">
+     finlang.config.constants module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="finlang.config.db_config.html">
+     finlang.config.db_config module
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="finlang.nlp_utils.html">
+   finlang.nlp_utils package
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     finlang.nlp_utils.db_utils module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="finlang.nlp_utils.tagging_utils.html">
+     finlang.nlp_utils.tagging_utils module
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="finlang.plotting.html">
+   finlang.plotting package
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="finlang.plotting.app.html">
+     finlang.plotting.app module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="finlang.plotting.plotting_utils.html">
+     finlang.plotting.plotting_utils module
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="finlang.scrape_utils.html">
+   finlang.scrape_utils package
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="finlang.scrape_utils.article_utils.html">
+     finlang.scrape_utils.article_utils module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="finlang.scrape_utils.data_utils.html">
+     finlang.scrape_utils.data_utils module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="finlang.scrape_utils.finviz_utils.html">
+     finlang.scrape_utils.finviz_utils module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="finlang.scrape_utils.motley_utils.html">
+     finlang.scrape_utils.motley_utils module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="finlang.scrape_utils.reddit_utils.html">
+     finlang.scrape_utils.reddit_utils module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="finlang.scrape_utils.twitter_utils.html">
+     finlang.scrape_utils.twitter_utils module
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="finlang.workers.html">
+   finlang.workers package
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="finlang.workers.scrape_worker.html">
+     finlang.workers.scrape_worker module
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+  </div>
+</nav>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+              
+              <div class="toc-item">
+                
+
+<nav id="bd-toc-nav">
+    
+</nav>
+              </div>
+              
+              <div class="toc-item">
+                
+              </div>
+              
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <div class="section" id="module-finlang.nlp_utils.db_utils">
+<span id="finlang-nlp-utils-db-utils-module"></span><h1>finlang.nlp_utils.db_utils module<a class="headerlink" href="#module-finlang.nlp_utils.db_utils" title="Permalink to this headline">¶</a></h1>
+<p>This module provides utilities for interacting with SQL databases, specifically mssql. Devises an OOP framework for
+interacting with database tables and implements a basic factory for generating WHERE clauses for sql queries. Also
+provides necessary API functionality for the alpha sentiment dashboard</p>
+<dl class="py class">
+<dt id="finlang.nlp_utils.db_utils.Between">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">finlang.nlp_utils.db_utils.</span></code><code class="sig-name descname"><span class="pre">Between</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#finlang.nlp_utils.db_utils.Between" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#finlang.nlp_utils.db_utils.Operation" title="finlang.nlp_utils.db_utils.Operation"><code class="xref py py-class docutils literal notranslate"><span class="pre">finlang.nlp_utils.db_utils.Operation</span></code></a></p>
+<p>Implements BETWEEN condition</p>
+<dl class="py method">
+<dt id="finlang.nlp_utils.db_utils.Between.format_clause">
+<code class="sig-name descname"><span class="pre">format_clause</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#finlang.nlp_utils.db_utils.Between.format_clause" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create conditional clause for the respective operation</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="finlang.nlp_utils.db_utils.DBTable">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">finlang.nlp_utils.db_utils.</span></code><code class="sig-name descname"><span class="pre">DBTable</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connection</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pyodbc.Connection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#finlang.nlp_utils.db_utils.DBTable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for interacting with an SQL table within a given database</p>
+<dl class="py method">
+<dt id="finlang.nlp_utils.db_utils.DBTable.add_column">
+<code class="sig-name descname"><span class="pre">add_column</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_type</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="headerlink" href="#finlang.nlp_utils.db_utils.DBTable.add_column" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new column in the SQL table and update the tables metadata</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>column</strong> – Name of new column to add to the table</p></li>
+<li><p><strong>data_type</strong> – SQL data type of the new column</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>AttributeError</strong> – If the column already exists in the given table</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns True if column was added successfully</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="finlang.nlp_utils.db_utils.DBTable.check_types">
+<code class="sig-name descname"><span class="pre">check_types</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#finlang.nlp_utils.db_utils.DBTable.check_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ensures the data provided matches the data type specifications of the corresponding columns</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – Iterable of elements</p></li>
+<li><p><strong>columns</strong> – Iterable of column names corresponding to each data element</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>AttributeError</strong> – If any of the columns provided are not present in the given table</p></li>
+<li><p><strong>ValueError</strong> – If any data element has an unexpected type, not matching with the table’s column specification</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True if the data is valid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="finlang.nlp_utils.db_utils.DBTable.execute">
+<code class="sig-name descname"><span class="pre">execute</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">commit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">many</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="headerlink" href="#finlang.nlp_utils.db_utils.DBTable.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute arbitrary query within the respective database</p>
+<p>WARNING: this is NOT limited to just the provided table, executing SQL commands through this method can access
+anything on the database just like a normal SQL command</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> – The entire SQL query (can contain placeholders)</p></li>
+<li><p><strong>params</strong> – Values for each placeholder in the query</p></li>
+<li><p><strong>commit</strong> – Whether to commit the changes to the database</p></li>
+<li><p><strong>many</strong> – Whether to use executemany when executing the query with params</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dataframe of the fetched result, if the query is an insert without a return this will be an empty dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="finlang.nlp_utils.db_utils.DBTable.get_standard_record">
+<code class="sig-name descname"><span class="pre">get_standard_record</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#finlang.nlp_utils.db_utils.DBTable.get_standard_record" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function that takes a record which has a general structure and converts it to a standard record, or
+a dictionary of column: value pairs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>record</strong> – Non-standard record. Can be a tuple of values or a dictionary (already standard). If tuple of values
+is passed and the length does not match the number of columns in the table, the columns parameter
+must be specified.</p></li>
+<li><p><strong>columns</strong> – Columns corresponding to the given values in the record, when the record is a tuple</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>value pairs, standard record</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Dictionary of column</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="finlang.nlp_utils.db_utils.DBTable.insert_df">
+<code class="sig-name descname"><span class="pre">insert_df</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="headerlink" href="#finlang.nlp_utils.db_utils.DBTable.insert_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes command to insert dataframe into table</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – data to be inserted into table. Columns must be subset of table columns</p></li>
+<li><p><strong>chunksize</strong> – how many rows to be inserted at a time. If None, entire dataframe will be inserted</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if successful</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="finlang.nlp_utils.db_utils.DBTable.insert_many">
+<code class="sig-name descname"><span class="pre">insert_many</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">records</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="headerlink" href="#finlang.nlp_utils.db_utils.DBTable.insert_many" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes command to insert many records into SQL table</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>records</strong> – Iterable of: Dictionary of {column: value} pairs or Tuple of values.
+If tuple, columns must also be specified, unless using all columns in default order
+If dictionary, columns will be ignored</p></li>
+<li><p><strong>columns</strong> – ordered list of columns for insertion order</p></li>
+<li><p><strong>chunksize</strong> – How many records to insert per query. Defaults to None, all records are inserted at once</p></li>
+<li><p><strong>default</strong> – What to replace NaN and None-like data with. Defaults to None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Returns true if the insert was completed successfully</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="finlang.nlp_utils.db_utils.DBTable.insert_one">
+<code class="sig-name descname"><span class="pre">insert_one</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="headerlink" href="#finlang.nlp_utils.db_utils.DBTable.insert_one" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes insertion to table</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>record</strong> – Dictionary of {column: value} pairs or Tuple of values.
+If tuple, columns must also be specified, unless using all columns in default order
+If dictionary, columns will be ignored</p></li>
+<li><p><strong>columns</strong> – ordered list of columns for insertion order</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if successfully inserted</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="finlang.nlp_utils.db_utils.DBTable.load_data">
+<code class="sig-name descname"><span class="pre">load_data</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#finlang.nlp_utils.db_utils.DBTable.load_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load all data from table into <cite>self.data</cite> attribute</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="finlang.nlp_utils.db_utils.DBTable.select">
+<code class="sig-name descname"><span class="pre">select</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">where_clause</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#finlang.nlp_utils.db_utils.Operator" title="finlang.nlp_utils.db_utils.Operator"><span class="pre">finlang.nlp_utils.db_utils.Operator</span></a><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="headerlink" href="#finlang.nlp_utils.db_utils.DBTable.select" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute a select query on the table</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>columns</strong> – list of columns to select from table</p></li>
+<li><p><strong>where_clause</strong> – string, where condition to filter rows from database. If None, no effect.
+Also supports passing Clause, an iterable of rules which can be used to construct a where
+clause with the construct_where function API. See db_utils.construct_where for more info</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dataframe of the fetched result</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="finlang.nlp_utils.db_utils.DBTable.update_column_on_multiple_primary_keys">
+<code class="sig-name descname"><span class="pre">update_column_on_multiple_primary_keys</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_vals</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary_keys</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="headerlink" href="#finlang.nlp_utils.db_utils.DBTable.update_column_on_multiple_primary_keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates a single column with multiple new values corresponding to rows matching the provided primary keys</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>column</strong> – Column in table to update</p></li>
+<li><p><strong>new_vals</strong> – List of new values to set in the column, one for each row to be updated</p></li>
+<li><p><strong>primary_keys</strong> – List of primary keys representing the rows to update, must be the same length as <cite>new_vals</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If primary keys for table were not found</p></li>
+<li><p><strong>KeyError</strong> – If the given primary key tuple length does not equal the number of primary key columns in
+    the table</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns True if all rows in the column were updated successfully</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="finlang.nlp_utils.db_utils.DBTable.update_column_on_primary">
+<code class="sig-name descname"><span class="pre">update_column_on_primary</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_val</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Tuple</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="headerlink" href="#finlang.nlp_utils.db_utils.DBTable.update_column_on_primary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates a single entry in a given column to a new value</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>column</strong> – Column in table to update</p></li>
+<li><p><strong>new_val</strong> – Value to set the column to</p></li>
+<li><p><strong>primary_key</strong> – Primary key corresponding to the row in the table to update</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If primary keys for table were not found</p></li>
+<li><p><strong>KeyError</strong> – If the given primary key tuple length does not equal the number of primary key columns in
+    the table</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns True if column entry was updated successfully</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="finlang.nlp_utils.db_utils.In">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">finlang.nlp_utils.db_utils.</span></code><code class="sig-name descname"><span class="pre">In</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vals</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#finlang.nlp_utils.db_utils.In" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#finlang.nlp_utils.db_utils.Operation" title="finlang.nlp_utils.db_utils.Operation"><code class="xref py py-class docutils literal notranslate"><span class="pre">finlang.nlp_utils.db_utils.Operation</span></code></a></p>
+<p>Implements IN condition</p>
+<dl class="py method">
+<dt id="finlang.nlp_utils.db_utils.In.format_clause">
+<code class="sig-name descname"><span class="pre">format_clause</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#finlang.nlp_utils.db_utils.In.format_clause" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create conditional clause for the respective operation</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="finlang.nlp_utils.db_utils.Like">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">finlang.nlp_utils.db_utils.</span></code><code class="sig-name descname"><span class="pre">Like</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#finlang.nlp_utils.db_utils.Like" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#finlang.nlp_utils.db_utils.Operation" title="finlang.nlp_utils.db_utils.Operation"><code class="xref py py-class docutils literal notranslate"><span class="pre">finlang.nlp_utils.db_utils.Operation</span></code></a></p>
+<p>Implements LIKE condition for matching regex</p>
+<dl class="py method">
+<dt id="finlang.nlp_utils.db_utils.Like.format_clause">
+<code class="sig-name descname"><span class="pre">format_clause</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#finlang.nlp_utils.db_utils.Like.format_clause" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create conditional clause for the respective operation</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="finlang.nlp_utils.db_utils.Operation">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">finlang.nlp_utils.db_utils.</span></code><code class="sig-name descname"><span class="pre">Operation</span></code><a class="headerlink" href="#finlang.nlp_utils.db_utils.Operation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Base class for the different possible operations used in SQL where conditions</p>
+<dl class="py method">
+<dt id="finlang.nlp_utils.db_utils.Operation.format_clause">
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">format_clause</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#finlang.nlp_utils.db_utils.Operation.format_clause" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create conditional clause for the respective operation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="finlang.nlp_utils.db_utils.Operation.format_value">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">format_value</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#finlang.nlp_utils.db_utils.Operation.format_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format value for where clause</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="finlang.nlp_utils.db_utils.Operator">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">finlang.nlp_utils.db_utils.</span></code><code class="sig-name descname"><span class="pre">Operator</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#finlang.nlp_utils.db_utils.Operator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>Create Enum for the different conditions that can be used in the WHERE clause factory</p>
+<dl class="py attribute">
+<dt id="finlang.nlp_utils.db_utils.Operator.BETWEEN">
+<code class="sig-name descname"><span class="pre">BETWEEN</span></code><em class="property"> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'finlang.nlp_utils.db_utils.Between'&gt;</span></em><a class="headerlink" href="#finlang.nlp_utils.db_utils.Operator.BETWEEN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="finlang.nlp_utils.db_utils.Operator.EQ">
+<code class="sig-name descname"><span class="pre">EQ</span></code><em class="property"> <span class="pre">=</span> <span class="pre">functools.partial(&lt;class</span> <span class="pre">'finlang.nlp_utils.db_utils.SingleOp'&gt;,</span> <span class="pre">op='eq')</span></em><a class="headerlink" href="#finlang.nlp_utils.db_utils.Operator.EQ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="finlang.nlp_utils.db_utils.Operator.GE">
+<code class="sig-name descname"><span class="pre">GE</span></code><em class="property"> <span class="pre">=</span> <span class="pre">functools.partial(&lt;class</span> <span class="pre">'finlang.nlp_utils.db_utils.SingleOp'&gt;,</span> <span class="pre">op='ge')</span></em><a class="headerlink" href="#finlang.nlp_utils.db_utils.Operator.GE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="finlang.nlp_utils.db_utils.Operator.GT">
+<code class="sig-name descname"><span class="pre">GT</span></code><em class="property"> <span class="pre">=</span> <span class="pre">functools.partial(&lt;class</span> <span class="pre">'finlang.nlp_utils.db_utils.SingleOp'&gt;,</span> <span class="pre">op='gt')</span></em><a class="headerlink" href="#finlang.nlp_utils.db_utils.Operator.GT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="finlang.nlp_utils.db_utils.Operator.IN">
+<code class="sig-name descname"><span class="pre">IN</span></code><em class="property"> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'finlang.nlp_utils.db_utils.In'&gt;</span></em><a class="headerlink" href="#finlang.nlp_utils.db_utils.Operator.IN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="finlang.nlp_utils.db_utils.Operator.LE">
+<code class="sig-name descname"><span class="pre">LE</span></code><em class="property"> <span class="pre">=</span> <span class="pre">functools.partial(&lt;class</span> <span class="pre">'finlang.nlp_utils.db_utils.SingleOp'&gt;,</span> <span class="pre">op='le')</span></em><a class="headerlink" href="#finlang.nlp_utils.db_utils.Operator.LE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="finlang.nlp_utils.db_utils.Operator.LIKE">
+<code class="sig-name descname"><span class="pre">LIKE</span></code><em class="property"> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'finlang.nlp_utils.db_utils.Like'&gt;</span></em><a class="headerlink" href="#finlang.nlp_utils.db_utils.Operator.LIKE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="finlang.nlp_utils.db_utils.Operator.LT">
+<code class="sig-name descname"><span class="pre">LT</span></code><em class="property"> <span class="pre">=</span> <span class="pre">functools.partial(&lt;class</span> <span class="pre">'finlang.nlp_utils.db_utils.SingleOp'&gt;,</span> <span class="pre">op='lt')</span></em><a class="headerlink" href="#finlang.nlp_utils.db_utils.Operator.LT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="finlang.nlp_utils.db_utils.Operator.NE">
+<code class="sig-name descname"><span class="pre">NE</span></code><em class="property"> <span class="pre">=</span> <span class="pre">functools.partial(&lt;class</span> <span class="pre">'finlang.nlp_utils.db_utils.SingleOp'&gt;,</span> <span class="pre">op='ne')</span></em><a class="headerlink" href="#finlang.nlp_utils.db_utils.Operator.NE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="finlang.nlp_utils.db_utils.SingleOp">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">finlang.nlp_utils.db_utils.</span></code><code class="sig-name descname"><span class="pre">SingleOp</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#finlang.nlp_utils.db_utils.SingleOp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#finlang.nlp_utils.db_utils.Operation" title="finlang.nlp_utils.db_utils.Operation"><code class="xref py py-class docutils literal notranslate"><span class="pre">finlang.nlp_utils.db_utils.Operation</span></code></a></p>
+<p>Implements the conditionals that interact with a single operation such as greater than, not equal to, etc.</p>
+<dl class="py attribute">
+<dt id="finlang.nlp_utils.db_utils.SingleOp.SINGLE_OPS">
+<code class="sig-name descname"><span class="pre">SINGLE_OPS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">{'eq':</span> <span class="pre">'=',</span> <span class="pre">'ge':</span> <span class="pre">'&gt;=',</span> <span class="pre">'gt':</span> <span class="pre">'&gt;',</span> <span class="pre">'le':</span> <span class="pre">'&lt;=',</span> <span class="pre">'lt':</span> <span class="pre">'&lt;',</span> <span class="pre">'ne':</span> <span class="pre">'&lt;&gt;'}</span></em><a class="headerlink" href="#finlang.nlp_utils.db_utils.SingleOp.SINGLE_OPS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="finlang.nlp_utils.db_utils.SingleOp.format_clause">
+<code class="sig-name descname"><span class="pre">format_clause</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#finlang.nlp_utils.db_utils.SingleOp.format_clause" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create conditional clause for the respective operation</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.nlp_utils.db_utils.apply_new_keyword_tags">
+<code class="sig-prename descclassname"><span class="pre">finlang.nlp_utils.db_utils.</span></code><code class="sig-name descname"><span class="pre">apply_new_keyword_tags</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keywords</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case_sensitive</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_max</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_duplicates</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="headerlink" href="#finlang.nlp_utils.db_utils.apply_new_keyword_tags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fill the keyword linking table by performing keyword matching for rows in the sentiment table</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>keywords</strong> – Keywords to match on</p></li>
+<li><p><strong>case_sensitive</strong> – Whether or not the keyword match should be case sensitive. Default True</p></li>
+<li><p><strong>start_max</strong> – Default True, will look at the max id in the linking table, and continue keyword matching from that
+id onward. Useful for continuing keyword matching that did not complete, or after adding more rows
+to the sentiment table</p></li>
+<li><p><strong>drop_duplicates</strong> – Default True, will pull the current linking table and drop the duplicates before inserting to
+ensure errors are not thrown from re-adding a keyword match</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Returns the linking data that was inserted into the linking table</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.nlp_utils.db_utils.construct_where">
+<code class="sig-prename descclassname"><span class="pre">finlang.nlp_utils.db_utils.</span></code><code class="sig-name descname"><span class="pre">construct_where</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clause</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#finlang.nlp_utils.db_utils.Operator" title="finlang.nlp_utils.db_utils.Operator"><span class="pre">finlang.nlp_utils.db_utils.Operator</span></a><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conditional</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'AND'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">str</span><a class="headerlink" href="#finlang.nlp_utils.db_utils.construct_where" title="Permalink to this definition">¶</a></dt>
+<dd><p>Factory for generating SQL where clauses for the given clause data structure</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>clause</strong> – Iterable of rules to include in the WHERE clause</p></li>
+<li><p><strong>conditional</strong> – Operator to join the rules on. Default “AND”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>String of the resulting WHERE clause from the provided rules/conditions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.nlp_utils.db_utils.get_sentiment_by_keywords">
+<code class="sig-prename descclassname"><span class="pre">finlang.nlp_utils.db_utils.</span></code><code class="sig-name descname"><span class="pre">get_sentiment_by_keywords</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keywords</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">datetime.datetime</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">datetime.datetime</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sources</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">('id')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_linking</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">,</span> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">,</span> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#finlang.nlp_utils.db_utils.get_sentiment_by_keywords" title="Permalink to this definition">¶</a></dt>
+<dd><p>API that connects the sentiment table and keyword-linking table for fast querying on sentiment data, filtered
+on a select number of keywords</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – Model(s) to pull sentiment data for</p></li>
+<li><p><strong>keywords</strong> – List of keywords to pull sentiment data for. Default None, all data will be pulled</p></li>
+<li><p><strong>start</strong> – Optionally provide a start date to filter rows on, only select rows &gt;= start</p></li>
+<li><p><strong>end</strong> – Optionally provide an end date to filter rows on, only select rows &lt;= end</p></li>
+<li><p><strong>sources</strong> – Optionally provide a list of sources to filter on, only select rows WHERE source IN sources</p></li>
+<li><p><strong>cols</strong> – List of columns, in addition to the model column to return. By default only the id column will be included</p></li>
+<li><p><strong>return_linking</strong> – If true, the function will also return a dictionary of the keyword: List[ids] for the selected
+keywords. Default False, only the final sentiment dataframe is returned</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Returns the dataframe of sentiment data for the respective query, if return_linking is True, a dictionary of the
+keyword-ids will be returned as well (return will be a tuple of dataframe, dictionary)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.nlp_utils.db_utils.get_sentiment_data">
+<code class="sig-prename descclassname"><span class="pre">finlang.nlp_utils.db_utils.</span></code><code class="sig-name descname"><span class="pre">get_sentiment_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ids</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">datetime.datetime</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">datetime.datetime</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sources</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">('id')</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="headerlink" href="#finlang.nlp_utils.db_utils.get_sentiment_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Full API wrapper for the sentiment SQL table, providing optional conditional queries on each column</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – Name of sentiment model (corresponding to column name) to pull sentiment data for</p></li>
+<li><p><strong>ids</strong> – Optionally filter on a list of ids (rows)</p></li>
+<li><p><strong>start</strong> – Optionally provide a start date to filter rows on, only select rows &gt;= start</p></li>
+<li><p><strong>end</strong> – Optionally provide an end date to filter rows on, only select rows &lt;= end</p></li>
+<li><p><strong>sources</strong> – Optionally provide a list of sources to filter on, only select rows WHERE source IN sources</p></li>
+<li><p><strong>cols</strong> – List of columns, in addition to the model column to return. By default only the id column will be included</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dataframe of sentiment data from the built SQL query</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.nlp_utils.db_utils.get_sentiment_linking">
+<code class="sig-prename descclassname"><span class="pre">finlang.nlp_utils.db_utils.</span></code><code class="sig-name descname"><span class="pre">get_sentiment_linking</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ids</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keywords</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="headerlink" href="#finlang.nlp_utils.db_utils.get_sentiment_linking" title="Permalink to this definition">¶</a></dt>
+<dd><p>API for keyword-sentiment linking table</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ids</strong> – If provided, query will be filtered to only include rows WHERE id IN ids</p></li>
+<li><p><strong>keywords</strong> – If provided, query will be filtered to only include rows WHERE keyword IN keywords</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dataframe of ids and keywords which represent that the id in the sentiment table contains the respective keyword</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.nlp_utils.db_utils.sentiment_inference_pipeline">
+<code class="sig-prename descclassname"><span class="pre">finlang.nlp_utils.db_utils.</span></code><code class="sig-name descname"><span class="pre">sentiment_inference_pipeline</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">model:</span> <span class="pre">[&lt;class</span> <span class="pre">'str'&gt;,</span> <span class="pre">typing.Callable[[str],</span> <span class="pre">int]],</span> <span class="pre">table:</span> <span class="pre">finlang.nlp_utils.db_utils.DBTable,</span> <span class="pre">source_col:</span> <span class="pre">str,</span> <span class="pre">dest_col:</span> <span class="pre">str,</span> <span class="pre">chunk_size:</span> <span class="pre">Optional[int]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">fill_null:</span> <span class="pre">Optional[bool]</span> <span class="pre">=</span> <span class="pre">False,</span> <span class="pre">workers:</span> <span class="pre">Optional[int]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">verbose:</span> <span class="pre">Optional[bool]</span> <span class="pre">=</span> <span class="pre">True</span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="headerlink" href="#finlang.nlp_utils.db_utils.sentiment_inference_pipeline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses a model to perform sentiment prediction on a source column and insert those predictions to a destination
+column of a SQL table</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – Model to use for sentiment inference. If a string, huggingface transformers model will be used for
+binary [-1, 1] prediction, see <cite>nlp_utils.tagging_utils.sentiment_sign</cite> for more information. Otherwise,
+a callable must be provided which takes one parameter, a string, and returns an integer.</p></li>
+<li><p><strong>table</strong> – DBTable object to interact with SQL table</p></li>
+<li><p><strong>source_col</strong> – Name of source column in SQL table. Must be a text column to perform sentiment classification on</p></li>
+<li><p><strong>dest_col</strong> – Name of destination column in SQL table. If doesn’t already exist, column will be added. If it does
+exist, column must be integer type</p></li>
+<li><p><strong>chunk_size</strong> – Optionally provide a chunk size to split up the prediction insertions. If chunk size is None,
+inference is done on all rows and then inserted all at once. Otherwise inference is done on N rows
+at a time and are inserted in those chunks</p></li>
+<li><p><strong>fill_null</strong> – Optionally toggle fill_null to skip rows in the database where the destination column is already
+filled (is not NULL). Useful for continuing a previous inference job that did not complete.</p></li>
+<li><p><strong>workers</strong> – Optionally provide a number of workers to use. Default None, process will be done sequentially. When
+provided, dask will be used to split the dataframe into partitions to perform inference in parallel.</p></li>
+<li><p><strong>verbose</strong> – If True, will log errors when the model throws an error during inference, otherwise errors pass
+silently</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If primary keys are not found in the given table</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns True if sentiment inference and insertion completed successfully</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+              </div>
+              
+              
+              <div class='prev-next-bottom'>
+                
+
+              </div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+    
+  <script src="_static/js/index.1c5a1a01449ed65a7b51.js"></script>
+
+
+    <footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2021, Ryan Downing.<br/>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>
