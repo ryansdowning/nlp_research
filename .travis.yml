@@ -11,10 +11,36 @@ addons:
       - unixodbc
       - unixodbc-dev
 
-before_script: pip install poetry
+before_script:
+  - pip install poetry
+  - poetry install
 
 script:
-  - poetry install
-  - poetry run pytest -W ignore finlang/tests/
-  - poetry run isort -c finlang/
-  - poetry run pylint finlang/ --max-line-length=120 --ignore=tests --fail-under=9
+  - skip
+
+stages:
+  - lint
+  - test
+  - deploy
+
+jobs:
+  include:
+    - stage: lint
+      name: Run isort and pylinting
+      script:
+        - poetry run isort -c finlang/
+        - poetry run pylint finlang/ --max-line-length=120 --ignore=tests --fail-under=9
+    - stage: test
+      name: Run pytests
+      script: poetry run pytest -W ignore finlang/tests/
+    - stage: deploy
+      name: Deploy to GitHub Pages
+      if: (NOT type IN (pull_request)) AND (branch = master) # only deploy if merging on master
+      script:
+        - poetry run sphinx-apidoc -e -f -o docs/ finlang/ finlang/tests/
+        - cd docs && poetry run make html && cd ..
+      deploy:
+        provider: pages # deploy on github pages
+        skip_cleanup: true
+        github_token: "$token" # defined via the Travis interface
+        local_dir: docs/build/_html/
