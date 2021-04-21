@@ -164,7 +164,7 @@ def tagging_pipeline(
             for col in source:
                 tmp_func = data[col].progress_apply if progress else data[col].apply
                 result = tmp_func(
-                    lambda text: super().__call__(text, *args, **kwargs_)
+                    lambda text: super(TaggingPipeline, self).__call__(text, *args, **kwargs_)
                 )
                 data.loc[:, f"{col}{tag_suffix}"] = result
 
@@ -192,8 +192,8 @@ def tagging_pipeline(
         "device": device,
         "task": task,
     }
-    if hasattr(task_class, 'binary_output'):
-        params["binary_output"] = task_class.binary_output
+    # if hasattr(task_class, 'binary_output'):
+    #     params["binary_output"] = task_class.binary_output
     # Return TaggingPipeline with the processed arguments from the task class
     return TaggingPipeline(**params)
 
