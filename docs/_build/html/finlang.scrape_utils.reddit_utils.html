@@ -1,0 +1,431 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>finlang.scrape_utils.reddit_utils module &#8212; stock_sentiment 0.1.0 documentation</title>
+    
+  <link rel="stylesheet" href="_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.d3f166471bb80abb5163.js">
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main">
+<div class="container-xl">
+
+    <a class="navbar-brand" href="index.html">
+    
+      <p class="title">stock_sentiment</p>
+    
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar-menu" class="col-lg-9 collapse navbar-collapse">
+      <ul id="navbar-main-elements" class="navbar-nav mr-auto">
+        
+        
+        
+      </ul>
+
+
+      
+
+      <ul class="navbar-nav">
+        
+        
+      </ul>
+    </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+          <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form>
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+
+    <div class="bd-toc-item active">
+    
+  
+    <ul class="nav bd-sidenav">
+        
+      </ul>
+  
+  </nav>
+          </div>
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+              
+
+<nav id="bd-toc-nav">
+    <ul class="nav section-nav flex-column">
+    
+    </ul>
+</nav>
+
+
+              
+          </div>
+          
+
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <div class="section" id="module-finlang.scrape_utils.reddit_utils">
+<span id="finlang-scrape-utils-reddit-utils-module"></span><h1>finlang.scrape_utils.reddit_utils module<a class="headerlink" href="#module-finlang.scrape_utils.reddit_utils" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="finlang.scrape_utils.reddit_utils.filter_marked">
+<code class="sig-prename descclassname"><span class="pre">finlang.scrape_utils.reddit_utils.</span></code><code class="sig-name descname"><span class="pre">filter_marked</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">praw.models.reddit.submission.Submission</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">marked_labels</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'id'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">praw.models.reddit.submission.Submission</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#finlang.scrape_utils.reddit_utils.filter_marked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to remove marked elements from list of elements using given field</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – Iterable of objects with attribute corresponding to field</p></li>
+<li><p><strong>marked_labels</strong> – Iterable of &lt;field&gt; values from the marked submissions</p></li>
+<li><p><strong>field</strong> – The attribute to check for submissions</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of submissions with the marked submissions removed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.scrape_utils.reddit_utils.get_comments_data">
+<code class="sig-prename descclassname"><span class="pre">finlang.scrape_utils.reddit_utils.</span></code><code class="sig-name descname"><span class="pre">get_comments_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">comments</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">praw.models.reddit.comment.Comment</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_fields</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#finlang.scrape_utils.reddit_utils.get_comments_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to retrieve the data fields from a list of comments</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>comments</strong> – List of comments to extract data from</p></li>
+<li><p><strong>data_fields</strong> – Ordered list of attributes to extract from submissions</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of tuples containing the data fields (ordered as given in input) from each submission</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.scrape_utils.reddit_utils.get_pushshift_comments">
+<code class="sig-prename descclassname"><span class="pre">finlang.scrape_utils.reddit_utils.</span></code><code class="sig-name descname"><span class="pre">get_pushshift_comments</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subreddit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">datetime.datetime</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">datetime.datetime</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_fields</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkpoint_freq</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="headerlink" href="#finlang.scrape_utils.reddit_utils.get_pushshift_comments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to stream subreddit comments from pushshift API through PSAW worker</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subreddit</strong> – </p></li>
+<li><p><strong>subreddit</strong> – Subreddit to stream from</p></li>
+<li><p><strong>start</strong> – Start date(time) for data stream</p></li>
+<li><p><strong>end</strong> – End date(time) for data stream</p></li>
+<li><p><strong>data_fields</strong> – Columns to include in the stream</p></li>
+<li><p><strong>file</strong> – File to save output to, must be provided if checkpoint_freq is specified</p></li>
+<li><p><strong>checkpoint_freq</strong> – How often (integer of rows) to save/checkpoint to a file, if a file already exists at the
+location, it will attempt to append to existing data.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments provided to the PSAW search_comments or search_submissions function.
+Please see their documentation for more details.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dataframe of subreddit comments for the provided query, also saves to file (csv) if provided</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.scrape_utils.reddit_utils.get_pushshift_submissions">
+<code class="sig-prename descclassname"><span class="pre">finlang.scrape_utils.reddit_utils.</span></code><code class="sig-name descname"><span class="pre">get_pushshift_submissions</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subreddit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">datetime.datetime</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">datetime.datetime</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_fields</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkpoint_freq</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="headerlink" href="#finlang.scrape_utils.reddit_utils.get_pushshift_submissions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to stream subreddit submissions from pushshift API through PSAW worker</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subreddit</strong> – </p></li>
+<li><p><strong>subreddit</strong> – Subreddit to stream from</p></li>
+<li><p><strong>start</strong> – Start date(time) for data stream</p></li>
+<li><p><strong>end</strong> – End date(time) for data stream</p></li>
+<li><p><strong>data_fields</strong> – Columns to include in the stream</p></li>
+<li><p><strong>file</strong> – File to save output to, must be provided if checkpoint_freq is specified</p></li>
+<li><p><strong>checkpoint_freq</strong> – How often (integer of rows) to save/checkpoint to a file, if a file already exists at the
+location, it will attempt to append to existing data.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments provided to the PSAW search_comments or search_submissions function.
+Please see their documentation for more details.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dataframe of subreddit submissions for the provided query, also saves to file (csv) if provided</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.scrape_utils.reddit_utils.get_submission_comments">
+<code class="sig-prename descclassname"><span class="pre">finlang.scrape_utils.reddit_utils.</span></code><code class="sig-name descname"><span class="pre">get_submission_comments</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">submissions</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">praw.models.reddit.submission.Submission</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">praw.models.reddit.comment.Comment</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#finlang.scrape_utils.reddit_utils.get_submission_comments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterates through reddit submissions and extracts the comments into a 1d list of reddit comments</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>submissions</strong> – iterable of reddit submissions to get the comments from</p></li>
+<li><p><strong>limit</strong> – number of comments to pull from each submission. If None, will pull all comments</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of comments extracted from the submissions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.scrape_utils.reddit_utils.get_submissions">
+<code class="sig-prename descclassname"><span class="pre">finlang.scrape_utils.reddit_utils.</span></code><code class="sig-name descname"><span class="pre">get_submissions</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subreddit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">praw.models.reddit.subreddit.Subreddit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_method</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#finlang.scrape_utils.reddit_utils.get_submissions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the submissions from a specified subreddit using a given sorting option33</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subreddit</strong> – Name of subreddit</p></li>
+<li><p><strong>sort_method</strong> – Method of sorting to use when pulling the submissions</p></li>
+<li><p><strong>kwargs</strong> – additional keyword arguments used in the specific sort method call</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of submissions retrieved from the subreddit</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.scrape_utils.reddit_utils.get_submissions_data">
+<code class="sig-prename descclassname"><span class="pre">finlang.scrape_utils.reddit_utils.</span></code><code class="sig-name descname"><span class="pre">get_submissions_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">submissions</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">praw.models.reddit.submission.Submission</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_fields</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#finlang.scrape_utils.reddit_utils.get_submissions_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to retrieve the data fields from a list of submissions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>submissions</strong> – List of submissions to extract data from</p></li>
+<li><p><strong>data_fields</strong> – Ordered list of attributes to extract from submissions</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of tuples containing the data fields (ordered as given in input) from each submission</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.scrape_utils.reddit_utils.get_subreddit_submission_comments">
+<code class="sig-prename descclassname"><span class="pre">finlang.scrape_utils.reddit_utils.</span></code><code class="sig-name descname"><span class="pre">get_subreddit_submission_comments</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subreddit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_method</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'new'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_fields</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#finlang.scrape_utils.reddit_utils.get_subreddit_submission_comments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scrapes all of the comments from the submissions of a given subreddit, respective to the sorting method/kwargs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subreddit</strong> – Name of subreddit</p></li>
+<li><p><strong>sort_method</strong> – Method of sorting to use when pulling the submissions</p></li>
+<li><p><strong>data_fields</strong> – Ordered list of attributes to extract from submissions</p></li>
+<li><p><strong>file</strong> – Default None. If specified, data will be written to this file (csv)</p></li>
+<li><p><strong>kwargs</strong> – Additional keyword arguments are passed into the pull request for the given
+sort method for submissions</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Pandas df of comments data from scraped submissions - also writes daf to csv if file is given</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.scrape_utils.reddit_utils.get_subreddit_submissions">
+<code class="sig-prename descclassname"><span class="pre">finlang.scrape_utils.reddit_utils.</span></code><code class="sig-name descname"><span class="pre">get_subreddit_submissions</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subreddit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_method</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'new'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_fields</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="headerlink" href="#finlang.scrape_utils.reddit_utils.get_subreddit_submissions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scrapes subreddit submissions and stores the data in pandas dataframe, or csv file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subreddit</strong> – Name of subreddit</p></li>
+<li><p><strong>sort_method</strong> – Method of sorting to use when pulling the submissions</p></li>
+<li><p><strong>data_fields</strong> – Ordered list of attributes to extract from submissions</p></li>
+<li><p><strong>file</strong> – Default None. If specified, data will be written to this file (csv)</p></li>
+<li><p><strong>kwargs</strong> – Additional keyword arguments are passed into the pull request for the given
+sort method</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Pandas df of submissions data - also writes df to csv if file is given</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.scrape_utils.reddit_utils.stream_subreddit_comments">
+<code class="sig-prename descclassname"><span class="pre">finlang.scrape_utils.reddit_utils.</span></code><code class="sig-name descname"><span class="pre">stream_subreddit_comments</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subreddit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_fields</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="finlang.nlp_utils.db_utils.html#finlang.nlp_utils.db_utils.DBTable" title="finlang.nlp_utils.db_utils.DBTable"><span class="pre">finlang.nlp_utils.db_utils.DBTable</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#finlang.scrape_utils.reddit_utils.stream_subreddit_comments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a process that indefinitely streams comments data from a subreddit to a file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subreddit</strong> – Name of subreddit</p></li>
+<li><p><strong>data_fields</strong> – Ordered list of attributes to extract from comments</p></li>
+<li><p><strong>file</strong> – Name of file (csv) to write data to</p></li>
+<li><p><strong>table</strong> – DBTable object that can be provided to insert data directly into SQL database</p></li>
+<li><p><strong>kwargs</strong> – Additional keyword arguments for streaming data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None - Process runs until error is thrown or is interrupted
+Comments data is written to the given file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.scrape_utils.reddit_utils.stream_subreddit_submissions">
+<code class="sig-prename descclassname"><span class="pre">finlang.scrape_utils.reddit_utils.</span></code><code class="sig-name descname"><span class="pre">stream_subreddit_submissions</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subreddit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_fields</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="finlang.nlp_utils.db_utils.html#finlang.nlp_utils.db_utils.DBTable" title="finlang.nlp_utils.db_utils.DBTable"><span class="pre">finlang.nlp_utils.db_utils.DBTable</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#finlang.scrape_utils.reddit_utils.stream_subreddit_submissions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a process that indefinitely streams submissions data from a subreddit to a file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subreddit</strong> – Name of subreddit</p></li>
+<li><p><strong>data_fields</strong> – Ordered list of attributes to extract from submissions</p></li>
+<li><p><strong>file</strong> – Name of file (csv) to write data to</p></li>
+<li><p><strong>table</strong> – DBTable object that can be provided to insert data directly into SQL database</p></li>
+<li><p><strong>kwargs</strong> – Additional keyword arguments for streaming data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None - Process runs until error is thrown or is interrupted
+Submissions data is written to the given file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.scrape_utils.reddit_utils.subreddit_data_stream">
+<code class="sig-prename descclassname"><span class="pre">finlang.scrape_utils.reddit_utils.</span></code><code class="sig-name descname"><span class="pre">subreddit_data_stream</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subreddit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub_or_comm</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_fields</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#finlang.scrape_utils.reddit_utils.subreddit_data_stream" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a generator expression that yields a stream of data from a subreddit given the input parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subreddit</strong> – Name of subreddit</p></li>
+<li><p><strong>sub_or_comm</strong> – identify type of data to stream: ‘submissions’ or ‘comments’</p></li>
+<li><p><strong>data_fields</strong> – Ordered list of attributes to extract from submissions/comments</p></li>
+<li><p><strong>kwargs</strong> – Additional keyword arguments provided to the prawcore stream function for submissions/comments</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Tuples of len(data_fields) are yielded respective to the ordered data fields</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.scrape_utils.reddit_utils.update_comments">
+<code class="sig-prename descclassname"><span class="pre">finlang.scrape_utils.reddit_utils.</span></code><code class="sig-name descname"><span class="pre">update_comments</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_or_file</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_col</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="headerlink" href="#finlang.scrape_utils.reddit_utils.update_comments" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Updates reddit comments data based on their associated ids. Pulls updated data and replaces it</dt><dd><p>in the given dataset</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_or_file</strong> – pandas df or a csv file containing old data (must have id column for updating)</p></li>
+<li><p><strong>id_col</strong> – Name of column to find the ids associated with the comments. This is used to pull the newly updated
+data respective to those ids</p></li>
+<li><p><strong>file</strong> – Default None. If specified, data will be written to this file (csv)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Pandas df with the same columns and shape as the original dataset, but with updated values
+If file is not None, will output this data to a csv (file must be .csv)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.scrape_utils.reddit_utils.update_submissions">
+<code class="sig-prename descclassname"><span class="pre">finlang.scrape_utils.reddit_utils.</span></code><code class="sig-name descname"><span class="pre">update_submissions</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_or_file</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_col</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="headerlink" href="#finlang.scrape_utils.reddit_utils.update_submissions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates reddit submissions data based on their associated ids. Pulls updated data and replaces it
+in the given dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_or_file</strong> – pandas df or a csv file containing old data (must have id column for updating)</p></li>
+<li><p><strong>id_col</strong> – Name of column to find the ids associated with the submissions. This is used to pull the newly updated
+data respective to those ids</p></li>
+<li><p><strong>file</strong> – Default None. If specified, data will be written to this file (csv)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Pandas df with the same columns and shape as the original dataset, but with updated values
+If file is not None, will output this data to a csv (file must be .csv)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+              </div>
+              
+              
+              <div class='prev-next-bottom'>
+                
+
+              </div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+
+    
+  <script src="_static/js/index.d3f166471bb80abb5163.js"></script>
+
+
+    <footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    <p>
+          &copy; Copyright 2021, Ryan Downing.<br/>
+        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

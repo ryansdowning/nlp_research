@@ -1,0 +1,378 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>finlang.nlp_utils.tagging_utils module &#8212; stock_sentiment 0.1.0 documentation</title>
+    
+  <link rel="stylesheet" href="_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.d3f166471bb80abb5163.js">
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main">
+<div class="container-xl">
+
+    <a class="navbar-brand" href="index.html">
+    
+      <p class="title">stock_sentiment</p>
+    
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar-menu" class="col-lg-9 collapse navbar-collapse">
+      <ul id="navbar-main-elements" class="navbar-nav mr-auto">
+        
+        
+        
+      </ul>
+
+
+      
+
+      <ul class="navbar-nav">
+        
+        
+      </ul>
+    </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+          <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form>
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+
+    <div class="bd-toc-item active">
+    
+  
+    <ul class="nav bd-sidenav">
+        
+      </ul>
+  
+  </nav>
+          </div>
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+              
+
+<nav id="bd-toc-nav">
+    <ul class="nav section-nav flex-column">
+    
+    </ul>
+</nav>
+
+
+              
+          </div>
+          
+
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <div class="section" id="module-finlang.nlp_utils.tagging_utils">
+<span id="finlang-nlp-utils-tagging-utils-module"></span><h1>finlang.nlp_utils.tagging_utils module<a class="headerlink" href="#module-finlang.nlp_utils.tagging_utils" title="Permalink to this headline">¶</a></h1>
+<p>This module is provides various utilities for apply NLP tagging services to dataframes of text</p>
+<dl class="py function">
+<dt id="finlang.nlp_utils.tagging_utils.apply_keywords_tags">
+<code class="sig-prename descclassname"><span class="pre">finlang.nlp_utils.tagging_utils.</span></code><code class="sig-name descname"><span class="pre">apply_keywords_tags</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_or_file</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keywords</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'text'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case_sensitive</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">span</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag_suffix</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'_keywords'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="headerlink" href="#finlang.nlp_utils.tagging_utils.apply_keywords_tags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inserts keyword column to given dataframe which is of type: List[str] of the keywords
+found in the [source] column</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_or_file</strong> – Pandas dataframe or path to csv file with data</p></li>
+<li><p><strong>keywords</strong> – Iterable of strings to search for in text</p></li>
+<li><p><strong>source</strong> – column name or names containing the source text</p></li>
+<li><p><strong>case_sensitive</strong> – Toggle keyword case sensitivity</p></li>
+<li><p><strong>span</strong> – If true, will also return the spans the keywords were found in the source</p></li>
+<li><p><strong>tag_suffix</strong> – Name of new column will be formatted as [source][tag_suffix]</p></li>
+<li><p><strong>file</strong> – If provided, the output will be saved to a given file path as csv</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Pandas dataframe of data with attached keywords column</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.nlp_utils.tagging_utils.expanded_list_linking_index">
+<code class="sig-prename descclassname"><span class="pre">finlang.nlp_utils.tagging_utils.</span></code><code class="sig-name descname"><span class="pre">expanded_list_linking_index</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.core.series.Series</span><span class="p"><span class="pre">,</span> </span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keyword_col</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_col</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#finlang.nlp_utils.tagging_utils.expanded_list_linking_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to help create a mapping for keywords to given data indexes from a pandas DataFrame. This helps save a
+lot of memory when working with large datasets or a large number of keywords. Instead of expanding the rows or
+creating a multi-hot encode, we instead just create a map that can be used as a separate data structure to support
+the relationship between the data and the keywords.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – pandas DataFrame with keyword_col column where the keywords are a list of keywords corresponding to
+the data index</p></li>
+<li><p><strong>keyword_col</strong> – Name of keyword_col, each entry in the column must be type Iterable[str]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dictionary that maps keywords from keyword_col to the respective index of data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.nlp_utils.tagging_utils.filter_keywords">
+<code class="sig-prename descclassname"><span class="pre">finlang.nlp_utils.tagging_utils.</span></code><code class="sig-name descname"><span class="pre">filter_keywords</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keywords</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'text'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case_sensitive</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="headerlink" href="#finlang.nlp_utils.tagging_utils.filter_keywords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filters out rows that do not have any keywords in any source column(s)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – dataframe containing [source] column(s) of type str</p></li>
+<li><p><strong>keywords</strong> – Iterable of strings to search for in text</p></li>
+<li><p><strong>source</strong> – column name or names containing the source text</p></li>
+<li><p><strong>case_sensitive</strong> – Toggle keyword case sensitivity</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Original dataframe with rows filtered out</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.nlp_utils.tagging_utils.get_keywords_occurrences">
+<code class="sig-prename descclassname"><span class="pre">finlang.nlp_utils.tagging_utils.</span></code><code class="sig-name descname"><span class="pre">get_keywords_occurrences</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_or_file</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keywords</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'text'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case_sensitive</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#finlang.nlp_utils.tagging_utils.get_keywords_occurrences" title="Permalink to this definition">¶</a></dt>
+<dd><p>Counts the occurrences of each keyword found throughout the given source texts</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_or_file</strong> – Pandas dataframe or path to csv file with data</p></li>
+<li><p><strong>keywords</strong> – Iterable of strings to search for in text</p></li>
+<li><p><strong>source</strong> – column name or names containing the source text</p></li>
+<li><p><strong>case_sensitive</strong> – Toggle keyword case sensitivity</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Series containing the number of occurrences of the given keywords
+Index is same order as keywords input</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.nlp_utils.tagging_utils.get_keywords_sentiment">
+<code class="sig-prename descclassname"><span class="pre">finlang.nlp_utils.tagging_utils.</span></code><code class="sig-name descname"><span class="pre">get_keywords_sentiment</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_or_file</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keywords</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'text'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case_sensitive</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name_or_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'distilbert-base-uncased-finetuned-sst-2-english'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">summarize</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'sum'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.series.Series</span><a class="headerlink" href="#finlang.nlp_utils.tagging_utils.get_keywords_sentiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Aggregates the number of positively and negatively predicted keywords found throughout the given source
+texts for each given keyword</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_or_file</strong> – Pandas dataframe or path to csv file with data</p></li>
+<li><p><strong>keywords</strong> – Iterable of strings to search for in text</p></li>
+<li><p><strong>source</strong> – column name or names containing the source text</p></li>
+<li><p><strong>case_sensitive</strong> – Toggle keyword case sensitivity</p></li>
+<li><p><strong>model_name_or_path</strong> – name of transformers model to use or path to a model on local machine</p></li>
+<li><p><strong>summarize</strong> – How to aggregate the sentiment scores, options are {‘sum’, ‘count’}. If sum, simply compute the
+difference between the number of positive and negative texts for each keyword. If count, provide
+a tuple of the number of positive and negative texts for each keyword.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Series containing the sentiment scores for the corresponding keywords in same order as keywords input</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.nlp_utils.tagging_utils.keyword_bool_proc">
+<code class="sig-prename descclassname"><span class="pre">finlang.nlp_utils.tagging_utils.</span></code><code class="sig-name descname"><span class="pre">keyword_bool_proc</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keywords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">case_sensitive</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#finlang.nlp_utils.tagging_utils.keyword_bool_proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a process that returns a boolean value that corresponds to whether or not the passed in text contains
+any of the provided keywords (respective to case sensitivity)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>keywords</strong> – Iterable of strings to search for in text</p></li>
+<li><p><strong>case_sensitive</strong> – Toggle keyword case sensitivity</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Callable(str) -&gt; bool that returns True if the string contains a keyword and false otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.nlp_utils.tagging_utils.sentiment_sign">
+<code class="sig-prename descclassname"><span class="pre">finlang.nlp_utils.tagging_utils.</span></code><code class="sig-name descname"><span class="pre">sentiment_sign</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name_or_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'distilbert-base-uncased-finetuned-sst-2-english'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#finlang.nlp_utils.tagging_utils.sentiment_sign" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic factory for creating a callable that takes text as input and returns a sentiment prediction for that text</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_name_or_path</strong> – Name of huggingface model to use for sentiment prediction</p></li>
+<li><p><strong>binary</strong> – Toggle type of output for sentiment prediction. If True, output will be {0, 1}. Default False, output is
+{-1, 1}</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments to pass through to the pipeline factory for huggingface</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Callable that performs sentiment inference for provided text. Parameter name &lt;text&gt;</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.nlp_utils.tagging_utils.tagging_pipeline">
+<code class="sig-prename descclassname"><span class="pre">finlang.nlp_utils.tagging_utils.</span></code><code class="sig-name descname"><span class="pre">tagging_pipeline</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">transformers.configuration_utils.PretrainedConfig</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tokenizer</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">transformers.tokenization_utils.PreTrainedTokenizer</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">framework</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">revision</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_fast</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">TaggingPipeline</span><a class="headerlink" href="#finlang.nlp_utils.tagging_utils.tagging_pipeline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Utility factory method to build a tagging pipeline.</p>
+<p>A TaggingPipeline is a pipeline provided by transformers with its __call__ method overriden.
+The overrided functionality allows the pipeline to process dataframes with source str columns.
+Instead of outputting the standard prediction results, a call to any of these pipes will attach
+another column with the output from the pipe applied along the source columns</p>
+<blockquote>
+<div><p>Pipeline are made of:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>A Tokenizer instance in charge of mapping raw textual input to token</p></li>
+<li><p>A Model instance</p></li>
+<li><p>Some (optional) post processing for enhancing model’s output</p></li>
+</ul>
+</div></blockquote>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task</strong> (<cite>str</cite>) – The task defining which pipeline will be returned. Currently accepted tasks are:
+- “feature-extraction”: will return child of <cite>~transformers.FeatureExtractionPipeline</cite>
+- “sentiment-analysis”: will return child of <cite>~transformers.TextClassificationPipeline</cite>
+- “ner”: will return child of <cite>~transformers.TokenClassificationPipeline</cite>
+- “question-answering”: will return child of <cite>~transformers.QuestionAnsweringPipeline</cite>
+- “fill-mask”: will return child of <cite>~transformers.FillMaskPipeline</cite>
+- “summarization”: will return child of <cite>~transformers.SummarizationPipeline</cite>
+- “translation_xx_to_yy”: will return a <cite>~transformers.TranslationPipeline</cite>
+- “text-generation”: will return child of <cite>~transformers.TextGenerationPipeline</cite></p></li>
+<li><p><strong>(</strong><strong>str</strong><strong> or </strong><strong>PreTrainedModel</strong><strong> or </strong><strong>TFPreTrainedModel</strong> (<em>model</em>) – <dl class="simple">
+<dt>defaults to <cite>None</cite>):</dt><dd><p>The model that will be used by the pipeline to make predictions. This can be <cite>None</cite>,
+a model identifier or an actual pre-trained model inheriting from
+<cite>~transformers.PreTrainedModel</cite> for PyTorch and <cite>~transformers.TFPreTrainedModel</cite> for
+TensorFlow.
+If <cite>None</cite>, the default for this pipeline will be loaded.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>optional</strong> – <dl class="simple">
+<dt>defaults to <cite>None</cite>):</dt><dd><p>The model that will be used by the pipeline to make predictions. This can be <cite>None</cite>,
+a model identifier or an actual pre-trained model inheriting from
+<cite>~transformers.PreTrainedModel</cite> for PyTorch and <cite>~transformers.TFPreTrainedModel</cite> for
+TensorFlow.
+If <cite>None</cite>, the default for this pipeline will be loaded.</p>
+</dd>
+</dl>
+</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>:param :</dt><dd><dl class="simple">
+<dt>defaults to <cite>None</cite>):</dt><dd><p>The model that will be used by the pipeline to make predictions. This can be <cite>None</cite>,
+a model identifier or an actual pre-trained model inheriting from
+<cite>~transformers.PreTrainedModel</cite> for PyTorch and <cite>~transformers.TFPreTrainedModel</cite> for
+TensorFlow.
+If <cite>None</cite>, the default for this pipeline will be loaded.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<cite>str</cite> or <cite>~transformers.PretrainedConfig</cite>, <cite>optional</cite>, defaults to <cite>None</cite>) – The configuration that will be used by the pipeline to instantiate the model.
+This can be <cite>None</cite>, a model identifier or an actual pre-trained model configuration
+inheriting from <cite>~transformers.PretrainedConfig</cite>.
+If <cite>None</cite>, the default for this pipeline will be loaded.</p></li>
+<li><p><strong>tokenizer</strong> (<cite>str</cite> or <cite>~transformers.PreTrainedTokenizer</cite>, <cite>optional</cite>, defaults to <cite>None</cite>) – The tokenizer that will be used by the pipeline to encode data for the model. This can
+be <cite>None</cite>, a model identifier or an actual pre-trained tokenizer inheriting from
+<cite>~transformers.PreTrainedTokenizer</cite>.
+If <cite>None</cite>, the default for this pipeline will be loaded.</p></li>
+<li><p><strong>framework</strong> (<em>str</em>) – The framework to use, either “pt” for PyTorch or “tf” for TensorFlow. The specified
+framework must be installed.
+If no framework is specified, will default to the one currently installed. If no
+framework is specified and both frameworks are installed, will default to PyTorch.</p></li>
+<li><p><strong>revision</strong> (<em>str</em>) – When passing a task name or a string model identifier: The specific model version to use. It can be a
+branch name, a tag name, or a commit id, since we use a git-based system for storing models and other
+artifacts on huggingface.co, so <code class="docutils literal notranslate"><span class="pre">revision</span></code> can be any identifier allowed by git.</p></li>
+<li><p><strong>use_fast</strong> – Whether or not to use a Fast tokenizer if possible (a <code class="xref py py-class docutils literal notranslate"><span class="pre">PreTrainedTokenizerFast</span></code>).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+              </div>
+              
+              
+              <div class='prev-next-bottom'>
+                
+
+              </div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+
+    
+  <script src="_static/js/index.d3f166471bb80abb5163.js"></script>
+
+
+    <footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    <p>
+          &copy; Copyright 2021, Ryan Downing.<br/>
+        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

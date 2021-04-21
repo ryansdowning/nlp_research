@@ -1,0 +1,233 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>finlang.plotting.plotting_utils module &#8212; stock_sentiment 0.1.0 documentation</title>
+    
+  <link rel="stylesheet" href="_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.d3f166471bb80abb5163.js">
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main">
+<div class="container-xl">
+
+    <a class="navbar-brand" href="index.html">
+    
+      <p class="title">stock_sentiment</p>
+    
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar-menu" class="col-lg-9 collapse navbar-collapse">
+      <ul id="navbar-main-elements" class="navbar-nav mr-auto">
+        
+        
+        
+      </ul>
+
+
+      
+
+      <ul class="navbar-nav">
+        
+        
+      </ul>
+    </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+          <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form>
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+
+    <div class="bd-toc-item active">
+    
+  
+    <ul class="nav bd-sidenav">
+        
+      </ul>
+  
+  </nav>
+          </div>
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+              
+
+<nav id="bd-toc-nav">
+    <ul class="nav section-nav flex-column">
+    
+    </ul>
+</nav>
+
+
+              
+          </div>
+          
+
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <div class="section" id="module-finlang.plotting.plotting_utils">
+<span id="finlang-plotting-plotting-utils-module"></span><h1>finlang.plotting.plotting_utils module<a class="headerlink" href="#module-finlang.plotting.plotting_utils" title="Permalink to this headline">¶</a></h1>
+<p>This module provides functionality for summarizing sentiment data and constructing visualizations based on the
+summarized data</p>
+<dl class="py function">
+<dt id="finlang.plotting.plotting_utils.compute_facet_data">
+<code class="sig-prename descclassname"><span class="pre">finlang.plotting.plotting_utils.</span></code><code class="sig-name descname"><span class="pre">compute_facet_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keywords_linking</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Set</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_col</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_col</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_col</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_date</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">datetime.datetime</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_date</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">datetime.datetime</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sources</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keywords</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'m'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">summary</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'mentions'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">facet_keywords</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">facet_sources</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#finlang.plotting.plotting_utils.compute_facet_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the summary data respective to the provided facet settings and summary type. Performs data filtering
+if the optional parameters are supplied</p>
+<p>The data provided also has a corresponding keywords_linking that maps keywords to the respective indexes of the data
+table. This helps save a lot of memory with large datasets and also speeds up computation when working with many
+keywords</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – Full dataset with date_col, source_col, and (optionally) label_col. Further, the provided
+keyword_linking contains the indexes of the data where the keyword is in the data’s keywords</p></li>
+<li><p><strong>keywords_linking</strong> – Dictionary where the keys are keywords in the data’s text and and the values are sets of
+index values corresponding to indexes of data where the keyword is present in the data</p></li>
+<li><p><strong>date_col</strong> – Name of column in data that contains the date values for plotting, must be datetime</p></li>
+<li><p><strong>source_col</strong> – Name of column in data that contains the source name of the data for plotting</p></li>
+<li><p><strong>label_col</strong> – [Optional] Name of column in data contains the [sentiment] label, should be [-1, 1], but the code is
+generalized to support any ints or even floats probably. Default None, must be provided when using
+summary type ‘sum’ or ‘count’ since those summary methods needs that label data</p></li>
+<li><p><strong>start_date</strong> – start date for plotting date. Default None, if provided, the data will be filtered to only
+include data where date_col &gt;= start_date</p></li>
+<li><p><strong>end_date</strong> – end date for plotting date. Default None, if provided, the data will be filtered to only
+include data where date_col &lt;= end_date</p></li>
+<li><p><strong>sources</strong> – Sources to include in the plotted data. Default None, if provided the data will be filtered to only
+include data where the source_col is one of sources. Can be single str, or list of strings.</p></li>
+<li><p><strong>keywords</strong> – Keywords to include in the plotted data. Default None, if provided the data will be filtered to only
+include data where the keywords_linking contains the index of one of the provided keywords. Can be
+single str, or list of strings.</p></li>
+<li><p><strong>frequency</strong> – How often to compute summary statistic (must be compatible with pandas groupby) default ‘m’, monthly.</p></li>
+<li><p><strong>summary</strong> – Summary method, currently supports:
+mentions - Size of each data group
+sum - Sum of label_col for each data group
+count - count of positive and negative values in label_col for each data group</p></li>
+<li><p><strong>facet_keywords</strong> – Boolean flag, whether or not to divide the plotted lines among the individual keywords
+Default False, does not facet on keywords. If True, must provide &lt;keywords&gt; parameter</p></li>
+<li><p><strong>facet_sources</strong> – Boolean flag, whether or not to divide the plotted lines among the individual sources
+Default False, does not facet on sources. If True, must provide &lt;sources&gt; parameter</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dataframe of the summary data to be used for plotting</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="finlang.plotting.plotting_utils.plot_keywords">
+<code class="sig-prename descclassname"><span class="pre">finlang.plotting.plotting_utils.</span></code><code class="sig-name descname"><span class="pre">plot_keywords</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">facet_data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_col</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_col</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">summary</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'mentions'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">facet_keywords</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">facet_sources</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlap</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'plotly'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#finlang.plotting.plotting_utils.plot_keywords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dynamic plotting function that works with upstream text data that has been tagged in some (numerical) way</p>
+<p>The provided functionality allows the user to pass in a dataframe including a date_col, source_col, and label_col,
+and then specify various options for producing summarized graphs that represent the given data. Multiple summarizing
+methods are currently supported and the faceting optionality allows the user to visualize large data in a meaningful
+and clear manner.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>facet_data</strong> – Full dataset with date_col, source_col, and (optionally) label_col. Further, the provided
+keyword_linking contains the indexes of the data where the keyword is in the data’s keywords</p></li>
+<li><p><strong>date_col</strong> – Name of column in data that contains the date values for plotting, must be datetime</p></li>
+<li><p><strong>label_col</strong> – [Optional] Name of column in data contains the [sentiment] label, should be [-1, 1], but the code is
+generalized to support any ints or even floats probably. Default None, must be provided when using
+summary type ‘sum’ or ‘count’ since those summary methods needs that label data</p></li>
+<li><p><strong>summary</strong> – Summary method, currently supports:
+mentions - Size of each data group
+sum - Sum of label_col for each data group
+count - count of positive and negative values in label_col for each data group</p></li>
+<li><p><strong>facet_keywords</strong> – Boolean flag, whether or not to divide the plotted lines among the individual keywords
+Default False, does not facet on keywords. If True, must provide &lt;keywords&gt; parameter</p></li>
+<li><p><strong>facet_sources</strong> – Boolean flag, whether or not to divide the plotted lines among the individual sources
+Default False, does not facet on sources. If True, must provide &lt;sources&gt; parameter</p></li>
+<li><p><strong>overlap</strong> – If the data itself is facetted among the keywords or sources, this flag allows the lines to all be
+drawn on a single plot rather than using seaborn FacetGrid to draw one line on each subplot
+Default False, facets plots according to facet options</p></li>
+<li><p><strong>backend</strong> – Change the plotting backend used, by default the plotly package will be used. Specifying “matplotlib”
+will instead use matplotlib backend for plotting</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>fig with the data plotted corresponding to the given options and the selected plotting backend package</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+              </div>
+              
+              
+              <div class='prev-next-bottom'>
+                
+
+              </div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+
+    
+  <script src="_static/js/index.d3f166471bb80abb5163.js"></script>
+
+
+    <footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    <p>
+          &copy; Copyright 2021, Ryan Downing.<br/>
+        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

@@ -1,7 +1,7 @@
-sentiment
-=========
+finlang
+=======
 
 .. toctree::
    :maxdepth: 4
 
-   sentiment
+   finlang
