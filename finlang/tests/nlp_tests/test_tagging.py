@@ -1,6 +1,5 @@
 from finlang.nlp_utils import tagging_utils as tu
 
-
 # def test_tagging_pipeline(text_df):
 #     for task, settings in tu.TASK_SETTINGS.items():
 #         if task not in {'feature-extraction', 'sentiment-analysis', 'ner', 'summarization', 'translation_en_to_fr'}:
